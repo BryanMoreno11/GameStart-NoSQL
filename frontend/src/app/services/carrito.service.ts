@@ -41,6 +41,7 @@ insertarProducto(videojuego:any,cantidad:number){
     videojuego: videojuego,
     cantidad:cantidad,
     precio_total:videojuego.PRECIO,
+    stock:videojuego.STOCK
   }
   producto.precio_total=producto.cantidad*producto.videojuego.PRECIO;
   /*Buscamos en nuestro arreglo de productos un elemento que tenga el videojuego que se pasa como parámetro, en caso que no
@@ -167,7 +168,8 @@ mensajeAlertaStockNegativo(){
 export interface Producto{
   videojuego:any,
   cantidad: number,
-  precio_total:number
+  precio_total:number,
+  stock:number
 }
 
 export interface Carrito{
