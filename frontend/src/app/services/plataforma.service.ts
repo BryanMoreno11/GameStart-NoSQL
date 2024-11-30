@@ -19,6 +19,10 @@ plataformas=[
 {
   ID_PLATAFORMA:3,
   NOMBRE:'Xbox Series X',
+},
+{
+  ID_PLATAFORMA:4,
+  NOMBRE:'PlayStation 4',
 }
 ];
   

@@ -91,16 +91,16 @@ export class VideojuegosService {
       ID_VIDEOJUEGO_PLATAFORMA:6,
       TITULO: 'Red Dead Redemption 2',
       PRECIO: 39.99,
-      NOMBRE_PLATAFORMA: 'PlayStation 5',
+      NOMBRE_PLATAFORMA: 'PlayStation 4',
       STOCK: 20,
       GENEROS: ['Aventura', 'Acción', 'Western'],
       NOMBRE_DESARROLLADORA: 'Rockstar Games',
       DESCRIPCION_VIDEOJUEGO: 'Sumérgete en el Salvaje Oeste con Arthur Morgan y la pandilla Van der Linde.',
       IMAGEN: [
-        'assets/images/red-dead-1.jpg',
-        'assets/images/red-dead-2.jpg',
-        'assets/images/red-dead-3.jpg',
-        'assets/images/red-dead-4.jpg'
+        'https://media.gamestop.com/i/gamestop/10138091?$pdp2x$',
+        'https://media.gamestop.com/i/gamestop/10138091_10138093_10162932_10162935_10162941_10162943_SCR07?$screen2x$',
+        'https://media.gamestop.com/i/gamestop/10138091_10138093_10162932_10162935_10162941_10162943_SCR06?$screen2x$',
+        'https://media.gamestop.com/i/gamestop/10138091_10138093_10162932_10162935_10162941_10162943_SCR05?$screen2x$'
       ]
     },
     {
@@ -113,10 +113,10 @@ export class VideojuegosService {
       NOMBRE_DESARROLLADORA: 'CD Projekt Red',
       DESCRIPCION_VIDEOJUEGO: 'Explora Night City, una ciudad futurista llena de tecnología, intrigas y peligro.',
       IMAGEN: [
-        'assets/images/cyberpunk-1.jpg',
-        'assets/images/cyberpunk-2.jpg',
-        'assets/images/cyberpunk-3.jpg',
-        'assets/images/cyberpunk-4.jpg'
+        'https://media.gamestop.com/i/gamestop/10178511-420e9e56?$pdp2x$',
+        'https://media.gamestop.com/i/gamestop/10178511-420e9e56_SCR01?$screen$$&fmt=webp',
+        'https://media.gamestop.com/i/gamestop/10178511-420e9e56_SCR02?$screen2x$',
+        'https://media.gamestop.com/i/gamestop/10178511-420e9e56_SCR03?$screen2x$'
       ]
     }
 
