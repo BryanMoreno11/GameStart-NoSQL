@@ -1,0 +1,51 @@
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="formulario">
+        <div class="logo">
+            <a href="">
+                <img src="../../../assets/default_transparent_765x625.png" alt="No pudo cargar">
+            </a>
+        </div>
+        <h1>Registro de Usuario</h1>
+        <form (ngSubmit)="insertarUsuario()" #usuarioForm="ngForm">
+            <div class="username">
+                <input type="text" required [(ngModel)]="usuario.nombre" name="nombre">
+                <label>Nombre</label>
+            </div>
+            <div class="username">
+                <input type="text" required [(ngModel)]="usuario.apellido" name="apellido">
+                <label>Apellido</label>
+            </div>
+            <div class="username">
+                <input type="password" required [(ngModel)]="usuario.contrasenia" name="contrasenia">
+                <label>Contraseña</label>
+            </div>
+            <div class="username">
+                <input type="text" required [(ngModel)]="usuario.correo" name="correo">
+                <label>Correo</label>
+            </div>
+            <div class="username">
+                <input type="text" required [(ngModel)]="usuario.telefono" name="telefono">
+                <label>Telefono</label>
+            </div>
+            <div class="username">
+                <select required [(ngModel)]="usuario.rol" name="rol">
+                    <option value="" disabled selected>Seleccione un rol</option>
+                    <option value="admin">Admin</option>
+                    <option value="ventas">Ventas</option>
+                    <option value="inventario">Inventario</option>
+                </select>
+            </div>
+            <div class="recordar">¿Olvidaste tu contraseña?</div>
+            <input type="submit" value="Registrarse">
+            <div class="registrarse">
+                No tienes cuenta? <a href="#">registrate!</a>
+            </div>
+        </form>
+    </div>
+</body>

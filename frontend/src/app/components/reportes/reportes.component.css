@@ -1,0 +1,54 @@
+.container{
+    padding-top: 30px;
+}
+.videojuegos{
+    overflow-x: scroll;
+}
+
+.row{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.row{
+    margin-bottom: 20px;
+}
+
+.row h1{
+    text-align: center;
+}
+
+.button{
+    height: 35px;
+    color: white;
+    background-color: #095493;
+    border: none;
+}
+
+.button:hover{
+    cursor: pointer;
+    background-color: #E73741;
+}
+
+.auditoria{
+    margin-top: 20px;
+}
+
+.auditoria select{
+    margin-right: 10px;
+    height: 30px;
+}
+
+.auditoria input{
+    height: 30px;
+
+}
+
+@media(width<=768px){
+    .row{
+        grid-template-columns: 1fr;
+    }
+
+}
+    

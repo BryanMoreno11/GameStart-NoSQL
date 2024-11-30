@@ -1,0 +1,89 @@
+/*Estilos generales*/
+
+main {
+    margin: auto 15px;
+}
+
+h4 {
+    font-family: "Poppins", sans-serif;
+}
+
+
+/*Swiper Principal*/
+
+.swiper-principal {
+    margin: 0 0;
+    padding: 0 0;
+}
+
+.swiper-principal swiper-slide img {
+    width: 100%;
+    height: 100%;
+}
+
+.swiper-principal:hover {
+    cursor: pointer;
+}
+
+
+/*Swiper Videojuegos*/
+
+.swiper-videojuegos {
+    font-family: "Poppins", sans-serif;
+    margin-top: 30px;
+    width: 100%;
+    height: 100%;
+}
+
+.swiper-videojuegos swiper-slide {
+    height: auto;
+    width: auto;
+    margin-bottom: 40px;
+}
+
+swiper-slide:hover {
+    cursor: pointer;
+}
+
+.card {
+    height: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.swiper-videojuegos img {
+    width: 100%;
+    height: 100%;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+.content>* {
+    margin: 0 0;
+}
+
+.content>div>* {
+    display: inline;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+
+/*Media Queries*/
+
+@media(width<768px) {
+    .swiper-principal {
+        height: 130px;
+    }
+    .content {
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    main {
+        text-align: center;
+    }
+}

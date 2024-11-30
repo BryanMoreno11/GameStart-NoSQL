@@ -1,0 +1,66 @@
+<div class="container" id="content">
+    <button (click)="saveAsPDF()" class="button">Guardar como PDF</button>
+
+    <div class="auditoria" >
+        <select (change)="change()" name="" id="" [(ngModel)]="auditoria.tabla">
+            @for (tabla of tablas; track $index) {
+                <option value={{tabla.TABLA}}>{{tabla.TABLA}}</option>
+
+            }
+
+        </select> 
+        <input (change)="changeFecha()" [(ngModel)]="auditoria.fecha_input" type="date" name="" id="" [max]="maxDate">
+        <div >
+            <canvas id="OperacionesTablas" width="400" height="400"></canvas>
+        </div>
+      
+    </div>
+
+
+
+    <div >
+        <div class="videojuegos">
+            <canvas id="VentaVideojuegos" width="400" height="400"></canvas>
+        </div>
+
+        <div class="videojuegos">
+            <canvas id="RecaudacionVideojuegos" width="400" height="400"></canvas>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="">
+            <h1>Porcentaje de Venta por Género</h1>
+            <canvas id="VentaGeneros" width="400" height="400"></canvas>
+        </div>
+
+        <div class="">
+            <h1>Porcentaje de Recaudación por Género</h1>
+
+            <canvas id="RecaudacionGeneros" width="400" height="400"></canvas>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="">
+            <canvas id="VentaPlataformas" width="400" height="400"></canvas>
+        </div>
+
+        <div class="">
+            <canvas id="RecaudacionPlataformas" width="400" height="400"></canvas>
+        </div>
+    </div>
+
+    <div class="row">
+        
+        <div class="">
+            <canvas id="RecaudacionProveedor" width="400" height="400"></canvas>
+        </div>
+        
+        <div class="">
+            <canvas id="CantidadProveedor" width="400" height="400"></canvas>
+        </div>
+
+    </div>
+
+</div>

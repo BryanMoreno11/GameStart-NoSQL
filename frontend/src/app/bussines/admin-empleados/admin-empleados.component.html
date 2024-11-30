@@ -1,0 +1,70 @@
+<div>
+  <h2>Lista de Empleados</h2>
+  <button (click)="showInsertForm()" class="insert-button">Insertar Nuevo Empleado</button>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Sucursal</th>
+        <th>Ciudad</th>
+        <th>Puesto</th>
+        <th>Cédula</th>
+        <th>Nombre</th>
+        <th>Fecha de Nacimiento</th>
+        <th>Dirección</th>
+        <th>Teléfono</th>
+        <th>Correo</th>
+        <th>Estado</th>
+        <th>Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let empleado of empleados">
+        <td>{{ empleado.id_empleado ?? '' }}</td>
+        <td>{{ empleado.id_sucursal ?? '' }}</td>
+        <td>{{ empleado.id_ciudad ?? '' }}</td>
+        <td>{{ empleado.id_puesto ?? '' }}</td>
+        <td>{{ empleado.cedula }}</td>
+        <td>{{ empleado.nombre }}</td>
+        <td>{{ empleado.fecha_nacimiento?.toLocaleDateString() ?? '' }}</td>
+        <td>{{ empleado.direccion }}</td>
+        <td>{{ empleado.telefono }}</td>
+        <td>{{ empleado.correo }}</td>
+        <td>{{ empleado.estado }}</td>
+        <td>
+          <button (click)="editEmpleado(empleado)">Editar</button>
+       
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <div class="modal" [ngClass]="{'is-visible': isFormVisible}">
+    <div class="modal-content">
+      <span class="close-button" (click)="closeModal()">&times;</span>
+      <h2>{{ isEditing ? 'Editar Empleado' : 'Agregar Empleado' }}</h2>
+      <form (ngSubmit)="saveEmpleado()" #empleadoForm="ngForm">
+        <select name="id_sucursal" [(ngModel)]="selectedEmpleado.id_sucursal" required>
+          <option *ngFor="let sucursal of sucursales" [value]="sucursal.ID_SUCURSAL">{{ sucursal.DIRECCION }}</option>
+        </select>
+        <select name="id_ciudad" [(ngModel)]="selectedEmpleado.id_ciudad" required>
+          <option *ngFor="let ciudad of ciudades" [value]="ciudad.ID_CIUDAD">{{ ciudad.NOMBRE }}</option>
+        </select>
+        <select name="id_puesto" [(ngModel)]="selectedEmpleado.id_puesto" required>
+          <option *ngFor="let puesto of puestos" [value]="puesto.ID_PUESTO">{{ puesto.NOMBRE }}</option>
+        </select>
+        <input name="cedula" [(ngModel)]="selectedEmpleado.cedula" placeholder="Cédula" required>
+        <input name="nombre" [(ngModel)]="selectedEmpleado.nombre" placeholder="Nombre" required>
+        <input type="date" name="fecha_nacimiento" [(ngModel)]="selectedEmpleado.fecha_nacimiento" placeholder="Fecha de Nacimiento" required>
+        <input name="direccion" [(ngModel)]="selectedEmpleado.direccion" placeholder="Dirección" required>
+        <input name="telefono" [(ngModel)]="selectedEmpleado.telefono" placeholder="Teléfono" required>
+        <input name="correo" [(ngModel)]="selectedEmpleado.correo" placeholder="Correo" required>
+        <select name="estado" [(ngModel)]="selectedEmpleado.estado" required>
+          <option value="activo">Activo</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+        <button type="submit">{{ isEditing ? 'Actualizar' : 'Agregar' }}</button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,36 @@
+<aside class="sidebar">
+    <div class="header">
+        <div class="company-name">GameStart</div>
+        <div class="logo-container">
+            <i class="fas fa-gamepad logo-icon"></i>
+        </div>
+    </div>
+    <nav>
+        <ul>
+            <li>
+                <a routerLink="/admin/dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/admin/empleados">
+                    <i class="fas fa-user"></i>
+                    <span>Empleados</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/admin/pedidos">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Pedidos</span>
+                </a>
+            </li>
+            <li class="logout">
+                <a href="#" (click)="goToHome()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>

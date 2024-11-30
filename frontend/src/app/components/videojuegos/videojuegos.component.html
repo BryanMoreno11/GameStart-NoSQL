@@ -1,0 +1,35 @@
+<div class="container">
+    <div class="selectores">
+        <select name="" id="" class="select" [(ngModel)]="plataforma" (change)="clasificarporCategoria(plataforma)">
+            <option value="">Seleccione Consola</option>
+            @for(plataforma of plataformas; track plataforma.ID_PLATAFORMA){
+                <option [value]="plataforma.NOMBRE">{{plataforma.NOMBRE}}</option>
+            }
+            
+        </select>
+
+        <select name="" id="" class="select" [(ngModel)]="metodoOrdenamientoSeleccionado" (change)="ordenarMetodos(metodoOrdenamientoSeleccionado)">
+            <option value="defecto">Orden por defecto</option>
+            <option value="menorMayor">Ordenar por precio:bajo a alto</option>
+            <option value="mayorMenor">Ordenar por precio:alto a bajo</option>
+        </select>
+
+    </div>
+  
+    <div class="galeria">
+        @for (videojuego of videojuegos; track videojuego.ID_VIDEOJUEGO_PLATAFORMA) {
+        <div class="card">
+            <img [src]="videojuego.IMAGEN[0]" alt=""  [routerLink]="['/videojuego',videojuego.ID_VIDEOJUEGO_PLATAFORMA]">
+            <div class="card-body">
+                <p class="bold">{{videojuego.TITULO}}</p>
+                <p>{{videojuego.PRECIO | currency}}</p>
+                <button (click)="agregarVideojuego(videojuego)" class="button"><p>Añadir al carrito</p></button>
+            </div>
+        </div>
+        }
+    
+    </div>
+
+</div>
+
+

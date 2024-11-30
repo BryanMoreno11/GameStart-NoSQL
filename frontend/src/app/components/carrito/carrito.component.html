@@ -1,0 +1,70 @@
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+
+<div class="container">
+    @if(!carrito.cantidad_total){
+    <div>
+        <h1>Carrito</h1>
+        <p>No tienes ningún producto en el carrito, que esperas a comprar un producto!</p>
+        <a routerLink="/videojuegos">Comprar Videojuegos</a>
+    </div>
+    } @if(carrito.cantidad_total>0){
+    <table class="productos">
+        <thead class="encabezado">
+            <tr>
+                <th>
+                    <h1>Carrito</h1>
+                </th>
+            </tr>
+
+        </thead>
+        <hr>
+
+        <tbody>
+            @for(producto of productos;track producto.videojuego.ID_VIDEOJUEGO_PLATAFORMA){
+            <tr class="fila">
+                <td class="contenido">
+
+                    <div class="imagen">
+                        <img [src]="producto.videojuego.IMAGEN[0]" alt="">
+                    </div>
+
+                    <div class="informacion">
+                        <p>{{producto.videojuego.TITULO}}</p>
+                        <p>{{producto.videojuego.PRECIO}}</p>
+                        <div class="botones">
+                            <div class="quantity-input">
+                                <button (click)="decrementar(producto)" class="quantity-btn decrement">-</button>
+                                <input (change)="actualizarCantidad(producto, producto.cantidad)" [(ngModel)]="producto.cantidad" type="number" class="quantity" min="0" value="1">
+                                <button (click)="aumentar(producto)" class="quantity-btn increment">+</button>
+                            </div>
+                            <button (click)="eliminarProducto(producto)" class="eliminar-btn">Eliminar</button>
+                        </div>
+
+                    </div>
+                </td>
+            </tr>
+            <hr> }
+
+        </tbody>
+    </table>
+
+    <aside>
+        <h2> Subtotal: {{carrito.subtotal_venta}}$</h2>
+        <h2>Iva: {{carrito.iva}}$</h2>
+        <h2> Total: {{carrito.total_venta}}$</h2>
+        <button (click)="realizarCompra()">Finalizar Compra</button>
+        <a routerLink="/videojuegos"><i> <- Seguir comprando</i></a>
+    </aside>
+    }
+
+
+
+
+
+
+
+</div>

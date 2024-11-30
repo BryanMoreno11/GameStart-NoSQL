@@ -1,0 +1,136 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 125vh;
+    background-color: #f0f0f0;
+    height: 800px;
+}
+
+.formulario {
+    background: #fff;
+    margin: 10px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    text-align: center;
+}
+
+.formulario h1 {
+    margin-bottom: 20px;
+}
+
+.formulario .logo img {
+    max-width: 100px;
+    margin-bottom: -10px;
+}
+
+.formulario .username {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.formulario .username input {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.username select {
+    font-size: 12px;
+    width: 100%;
+    color: #000000;
+    font-family: "Poppins", sans-serif;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 3px;
+}
+
+.username select option:disabled {
+    color: #adadad;
+}
+
+.formulario .username label {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+.formulario .username .aux-label label {
+    top: -10px;
+    left: 00px;
+    color: #333;
+    font-size: 12px;
+    background: #fff;
+    padding: 0 5px;
+}
+
+.formulario .username input:focus+label,
+.formulario .username input:not(:placeholder-shown)+label {
+    top: -10px;
+    left: 00px;
+    color: #333;
+    font-size: 12px;
+    background: #fff;
+    padding: 0 5px;
+}
+
+.formulario .recordar {
+    margin: 10px 0;
+    color: #007BFF;
+    cursor: pointer;
+}
+
+.formulario .registrarse {
+    margin-top: 10px;
+}
+
+.formulario .registrarse a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.formulario input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007BFF;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.formulario input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+@media (min-width: 768px) {
+    .formulario {
+        top: 50%;
+        max-width: 400px;
+        font-size: 14px;
+    }
+    body {
+        height: 100vh;
+    }
+    .username select {
+        font-size: 13.5px;
+    }
+    .formulario .username .aux-label label {
+        font-size: 13.5px;
+    }
+    .formulario .username input:focus+label,
+    .formulario .username input:not(:placeholder-shown)+label {
+        font-size: 13.5px;
+    }
+}

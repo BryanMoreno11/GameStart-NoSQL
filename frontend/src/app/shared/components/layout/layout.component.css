@@ -1,0 +1,40 @@
+.layout-container {
+  display: flex;
+  height: 100vh; /* Altura completa de la ventana del navegador */
+}
+
+.main-content {
+  margin-left: 250px; /* Ajusta según el ancho del sidebar */
+  padding: 20px;
+  flex: 1;
+  background-color: #f4f4f4;
+  height: 100vh;
+  overflow-y: auto;
+  border-top-left-radius: 15px; /* Bordes redondeados en la parte superior izquierda del contenido */
+  border-bottom-left-radius: 15px; /* Bordes redondeados en la parte inferior izquierda del contenido */
+  box-shadow: inset 4px 0 12px rgba(0, 0, 0, 0.1); /* Sombreado interno para el contenido */
+}
+
+.hamburger-menu {
+  display: none;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background-color: #1F2937;
+  color: #ecf0f1;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+
+  .hamburger-menu {
+    display: block;
+  }
+}

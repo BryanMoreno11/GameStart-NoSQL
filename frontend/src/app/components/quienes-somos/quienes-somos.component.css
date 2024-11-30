@@ -1,0 +1,125 @@
+body {
+    border: 2px solid #f4f4f4;
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    width: 99.8%;
+}
+
+header {
+    background-color: #065392;
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+main {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 10px 10px 1rem;
+}
+
+.about-us,
+.our-values {
+    background: white;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s forwards;
+}
+
+.about-us {
+    animation-delay: 0.2s;
+}
+
+.our-values {
+    animation-delay: 0.4s;
+}
+
+h1,
+h2,
+h3 {
+    margin-top: 0;
+}
+
+.value-card {
+    margin-bottom: 1.5rem;
+}
+
+.value-card:last-child {
+    margin-bottom: 0;
+}
+
+footer {
+    background-color: #065392;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+}
+
+footer .container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    padding: 20px 0;
+}
+
+footer .container * {
+    margin-bottom: 0;
+}
+
+footer .elemento {
+    width: 40%;
+    height: fit-content;
+}
+
+footer .redes ul {
+    list-style: none;
+    padding: 0;
+}
+
+footer .redes ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+footer i {
+    color: white;
+    font-size: 25px;
+}
+
+footer .franja {
+    min-height: 25px;
+    background-color: #ED261A;
+    margin-top: 20px;
+}
+
+footer .copyright {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    footer .container {
+        flex-direction: column;
+        align-items: center;
+    }
+    footer .elemento {
+        width: 80%;
+        text-align: center;
+    }
+}

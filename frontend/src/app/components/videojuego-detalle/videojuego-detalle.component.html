@@ -1,0 +1,60 @@
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+
+<div class="container">
+    <section class="galeria">
+
+        <swiper-container class="swiper-principal" init="false" thumbs-swiper=".swiper-miniatura">
+            @for (imagen of videojuego.IMAGEN; track $index) {
+            <swiper-slide class="swiper-principal">
+
+                <div (click)="cambiarEstadoZoom(!zoomActivado,imagenZoom,$event,imagen)" (mousemove)="zoom(imagenZoom,$event,imagen)" (mouseout)="zoomOut(imagenZoom)" id="imageZoom" #imagenZoom style="--display:none;
+                        --url:url();
+                        --zoom-x:0%;
+                        --zoom-y:0%">
+                    <img [src]="imagen">
+                </div>
+            </swiper-slide>
+            }
+        </swiper-container>
+
+
+        <swiper-container class="swiper-miniatura" init="false">
+            @for (imagen of videojuego.IMAGEN; track $index) {
+            <swiper-slide>
+                <img [src]="imagen">
+            </swiper-slide>
+
+            }
+        </swiper-container>
+    </section>
+
+    <section class="detalles">
+        <h1>{{videojuego.TITULO}}</h1>
+        <h2>{{videojuego.PRECIO | currency }}</h2>
+        <p class="bold in-line">Consola:</p>
+        <p class="in-line">{{videojuego.NOMBRE_PLATAFORMA}}</p>
+        <br>
+        <p class="bold in-line">Stock:</p>
+        <p class="in-line">{{videojuego.STOCK}}</p>
+        <br>
+        <p class="bold in-line">Generos:</p>
+        <p class="in-line">{{videojuego.GENEROS}}</p>
+        <br>
+        <p class="bold in-line">Desarrolladora:</p>
+        <p class="in-line">{{videojuego.NOMBRE_DESARROLLADORA}}</p>
+        <p>{{videojuego.DESCRIPCION_VIDEOJUEGO}}</p>
+        <div class="botones">
+            <div class="quantity-input">
+                <button (click)="decrementar()" class="quantity-btn decrement">-</button>
+                <input (change)="changeCantidad()" [(ngModel)]="cantidad" type="number" class="quantity" min="1" value="1">
+                <button (click)="incrementar()" class="quantity-btn increment">+</button>
+            </div>
+            <button (click)="agregarProductoCarrito(videojuego)" class="compra">Agregar al Carrito</button>
+        </div>
+
+    </section>
+</div>

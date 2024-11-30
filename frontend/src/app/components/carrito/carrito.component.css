@@ -1,0 +1,131 @@
+/*Estilos generales*/
+
+.container {
+    font-family: "Poppins", sans-serif;
+    display: grid;
+    grid-template-columns: 75% 1fr;
+    gap: 30px;
+    margin: 5px;
+}
+
+a {
+    text-decoration: none;
+}
+
+img {
+    width: 150px;
+    height: 150px;
+}
+
+h1 {
+    margin: 0;
+    padding: 0;
+}
+
+aside {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+aside button {
+    height: 50px;
+    background-color: #095493;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    margin-bottom: 8px;
+}
+
+aside button:hover {
+    cursor: pointer;
+    background-color: #E73741;
+}
+
+aside a {
+    margin-left: 10px;
+}
+
+
+/*Estilos para la tabla*/
+
+.productos {
+    text-align: left;
+    border-collapse: collapse;
+}
+
+.productos .encabezado {
+    height: 50px;
+}
+
+.contenido {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    gap: 5px;
+}
+
+.informacion .botones {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.informacion .botones .eliminar-btn {
+    border: none;
+    border-radius: 5px;
+    width: 110px;
+    height: 30px;
+    background-color: #095493;
+    color: white;
+}
+
+.informacion .botones .eliminar-btn:hover {
+    cursor: pointer;
+    background-color: #E73741;
+}
+
+.quantity-input {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.quantity {
+    width: 50px;
+    height: 30px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-right: none;
+    box-sizing: border-box;
+}
+
+.quantity::-webkit-outer-spin-button,
+.quantity::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+/*Media queries*/
+
+@media(width<=768px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+    .informacion .botones {
+        display: flex;
+        flex-direction: column;
+    }
+}

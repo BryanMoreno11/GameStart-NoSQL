@@ -1,0 +1,90 @@
+/*Estilos generales para el componente*/
+.container{
+    margin-top: 30px;
+    margin-left: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.galeria{
+    margin-top:10px ;
+    display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(250px,1fr)) ;
+    gap: 20px;
+}
+
+/*Estilos para el select de ordenamiento*/
+
+.selectores{
+    align-self: flex-end;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.select{
+    width: fit-content;
+  
+    height: 40px;
+    margin-bottom: 15px;
+    font-family: Inter;
+
+}
+
+
+/*Estilos generales para las cards*/
+.card{
+    display: flex;
+    flex-direction: column;
+    transition: transform .3s ease;
+}
+
+
+.card img{
+   width: 100%;
+   height: 100%;
+}
+
+.card:hover{
+    cursor: pointer;
+    transform: translateY(-5px) translateZ(0);
+}
+
+
+/*Estilos para el cuerpo de las cards*/
+
+.card-body *{
+    width: 100%;
+    margin: 0px;
+    margin-top: 5px;
+}
+
+
+.bold{
+    font-weight: bold;
+
+}
+
+.button{
+    height: 35px;
+    color: white;
+    background-color: #095493;
+    border: none;
+}
+
+.button:hover{
+    cursor: pointer;
+    background-color: #E73741;
+}
+
+/*Media queries*/
+@media (width<=768px){
+    .galeria{
+        grid-template-columns: repeat(auto-fill, minmax(150px,1fr)) ;
+    }
+    .container{
+        margin: 10px;
+    }
+}

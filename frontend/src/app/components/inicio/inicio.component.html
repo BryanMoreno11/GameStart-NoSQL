@@ -1,0 +1,46 @@
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+
+<swiper-container class="swiper-principal" init="false">
+    <swiper-slide>
+        <img src="https://cdn11.bigcommerce.com/s-6334b/images/stencil/original/carousel/205/mailtradeslide.png?c=2" alt="">
+    </swiper-slide>
+    <swiper-slide>
+        <img src="https://cdn11.bigcommerce.com/s-6334b/images/stencil/original/carousel/214/IMG_0489.png?c=2" alt="">
+    </swiper-slide>
+    <swiper-slide>
+        <img src="https://cdn11.bigcommerce.com/s-6334b/images/stencil/original/carousel/180/pokemonblindboxbannerfinal1.jpg?c=2" alt="">
+    </swiper-slide>
+</swiper-container>
+<main>
+    <h4>VIDEOJUEGOS RECIENTES</h4>
+    <hr>
+    <swiper-container class="swiper-videojuegos" init="false">
+        @for(videojuego of videojuegos; track videojuego.ID_VIDEOJUEGO){
+        <swiper-slide [routerLink]="['/videojuego',videojuego.ID_VIDEOJUEGO_PLATAFORMA]">
+            <div class="card">
+                <div class="header">
+                    <img src={{videojuego.IMAGEN[0]}} alt="" loading="lazy">
+
+                </div>
+                <div class="content">
+
+                    <p class="bold">{{videojuego.TITULO}}</p>
+                    <div>
+                        <p class="bold">Costo:</p>
+                        <p> {{videojuego.PRECIO}}$</p>
+                    </div>
+                    <div>
+                        <p class="bold">Consola:</p>
+                        <p> {{videojuego.NOMBRE_PLATAFORMA}}</p>
+                    </div>
+                </div>
+            </div>
+        </swiper-slide>
+        }
+    </swiper-container>
+
+</main>

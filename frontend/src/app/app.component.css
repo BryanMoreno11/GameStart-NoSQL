@@ -1,0 +1,11 @@
+.container {
+    min-height: 100vh;
+    margin-bottom: 57.6px;
+
+}
+
+@media(width<=768px) {
+    .container {
+        margin: 0px 0px;
+    }
+}
