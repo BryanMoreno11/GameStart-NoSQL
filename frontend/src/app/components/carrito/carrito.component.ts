@@ -86,7 +86,7 @@ export class CarritoComponent {
   }
 
   realizarCompra() {
-    if (this.verificarSesion()) {
+    if (true) {
       Swal.fire({
         title: '¿Estás seguro de proceder con la compra?',
         icon: 'warning',
