@@ -6,7 +6,7 @@ const collectionName = 'productos';
 
 // Crear un videojuego
 const createProducto = async (req, res) => {
-  const { nombre, desarrolladora, plataforma, genero, tipo, precio, stock, clave_digital, imagenes, descripcion, fecha_creacion, estado } = req.body;
+  const { nombre, desarrolladora, plataforma, genero, tipo, precio, stock, claves_digitales, imagenes, descripcion, fecha_creacion } = req.body;
 
   const nuevoVideojuego = {
     nombre,
@@ -16,11 +16,10 @@ const createProducto = async (req, res) => {
     tipo,
     precio,
     stock,
-    clave_digital,
+    claves_digitales,
     imagenes,
     descripcion,
-    fecha_creacion: new Date(fecha_creacion),
-    estado
+    fecha_creacion: new Date(fecha_creacion)
   };
 
   try {
@@ -64,8 +63,7 @@ const getProductoById = async (req, res) => {
 // Actualizar un videojuego
 const updateProducto = async (req, res) => {
   const { id } = req.params;
-  const { nombre, desarrolladora, plataforma, genero, tipo, precio, stock, clave_digital, imagenes, descripcion, fecha_creacion, estado } = req.body;
-
+  const { nombre, desarrolladora, plataforma, genero, tipo, precio, stock, claves_digitales, imagenes, descripcion } = req.body;
   try {
     const db = client.db(dbName);
     const result = await db.collection(collectionName).updateOne(
@@ -79,11 +77,9 @@ const updateProducto = async (req, res) => {
           tipo,
           precio,
           stock,
-          clave_digital,
+          claves_digitales,
           imagenes,
           descripcion,
-          fecha_creacion: new Date(fecha_creacion),
-          estado
         }
       }
     );
