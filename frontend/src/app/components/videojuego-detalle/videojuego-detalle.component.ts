@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { VideojuegosService } from '../../services/videojuegos.service';
 import { FormsModule } from '@angular/forms';
 import { CarritoService } from '../../services/carrito.service';
+import { ProductosService } from '../../services/productos.service';
 
 @Component({
   selector: 'app-videojuego-detalle',
@@ -19,7 +20,7 @@ import { CarritoService } from '../../services/carrito.service';
 export class VideojuegoDetalleComponent implements OnInit {
   //-------------------------------------------atributos--------------------------------------------
   videojuego:any;
-  videojuegoId:number=0;
+  videojuegoId:string="";
   cantidad:number=1;
     //swipers
     swiperPrincipal=signal<SwiperContainer|null>(null);
@@ -27,7 +28,9 @@ export class VideojuegoDetalleComponent implements OnInit {
     zoomActivado:Boolean=false;
   //----------------------------------------Métodos-----------------------------------------------
  
-  constructor(private videojuego_service:VideojuegosService, private activatedRoute:ActivatedRoute, private carrito_service:CarritoService){
+  constructor(private videojuego_service:VideojuegosService, private activatedRoute:ActivatedRoute, private carrito_service:CarritoService,
+    private productos_service:ProductosService,
+  ){
     this.activatedRoute.params.subscribe(params=>{
       this.videojuegoId=params['id'];
     });
@@ -48,8 +51,13 @@ export class VideojuegoDetalleComponent implements OnInit {
 
 
   cargarVideojuego(){
-   this.videojuego=this.videojuego_service.getVideojuego(this.videojuegoId);
-   console.log("El videojuego es ", this.videojuego);
+    console.log("El id del videojuego es ", this.videojuegoId);
+
+   this.productos_service.getProducto(this.videojuegoId).subscribe(res=>{
+    this.videojuego=res;
+    console.log("El videojuego es ", this.videojuego);
+
+   });
   }
 
  

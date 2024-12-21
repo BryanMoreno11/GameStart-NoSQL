@@ -8,7 +8,7 @@
     <section class="galeria">
 
         <swiper-container class="swiper-principal" init="false" thumbs-swiper=".swiper-miniatura">
-            @for (imagen of videojuego.IMAGEN; track $index) {
+            @for (imagen of videojuego.imagenes; track $index) {
             <swiper-slide class="swiper-principal">
 
                 <div (click)="cambiarEstadoZoom(!zoomActivado,imagenZoom,$event,imagen)" (mousemove)="zoom(imagenZoom,$event,imagen)" (mouseout)="zoomOut(imagenZoom)" id="imageZoom" #imagenZoom style="--display:none;
@@ -36,17 +36,17 @@
         <h1>{{videojuego.TITULO}}</h1>
         <h2>{{videojuego.PRECIO | currency }}</h2>
         <p class="bold in-line">Consola:</p>
-        <p class="in-line">{{videojuego.NOMBRE_PLATAFORMA}}</p>
+        <p class="in-line">{{videojuego.plataforma.nombre}}</p>
         <br>
         <p class="bold in-line">Stock:</p>
-        <p class="in-line">{{videojuego.STOCK}}</p>
+        <p class="in-line">{{videojuego.stock}}</p>
         <br>
         <p class="bold in-line">Generos:</p>
-        <p class="in-line">{{videojuego.GENEROS}}</p>
+        <p class="in-line">{{videojuego.genero.nombre}}</p>
         <br>
         <p class="bold in-line">Desarrolladora:</p>
-        <p class="in-line">{{videojuego.NOMBRE_DESARROLLADORA}}</p>
-        <p>{{videojuego.DESCRIPCION_VIDEOJUEGO}}</p>
+        <p class="in-line">{{videojuego.desarrolladora}}</p>
+        <p>{{videojuego.descripcion}}</p>
         <div class="botones">
             <div class="quantity-input">
                 <button (click)="decrementar()" class="quantity-btn decrement">-</button>

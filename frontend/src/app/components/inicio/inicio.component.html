@@ -19,23 +19,23 @@
     <h4>VIDEOJUEGOS RECIENTES</h4>
     <hr>
     <swiper-container class="swiper-videojuegos" init="false">
-        @for(videojuego of videojuegos; track videojuego.ID_VIDEOJUEGO){
-        <swiper-slide [routerLink]="['/videojuego',videojuego.ID_VIDEOJUEGO_PLATAFORMA]">
+        @for(videojuego of videojuegos; track videojuego._id){
+        <swiper-slide [routerLink]="['/videojuego',videojuego._id]">
             <div class="card">
                 <div class="header">
-                    <img src={{videojuego.IMAGEN[0]}} alt="" loading="lazy">
+                    <img src={{videojuego.imagenes[0]}} alt="" loading="lazy">
 
                 </div>
                 <div class="content">
 
-                    <p class="bold">{{videojuego.TITULO}}</p>
+                    <p class="bold">{{videojuego.nombre}}</p>
                     <div>
                         <p class="bold">Costo:</p>
-                        <p> {{videojuego.PRECIO}}$</p>
+                        <p> {{videojuego.precio}}$</p>
                     </div>
                     <div>
                         <p class="bold">Consola:</p>
-                        <p> {{videojuego.NOMBRE_PLATAFORMA}}</p>
+                        <p> {{videojuego.plataforma.nombre}}</p>
                     </div>
                 </div>
             </div>
