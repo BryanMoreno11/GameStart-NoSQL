@@ -1,37 +1,34 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlataformaService {
-//atributos
-plataformas=[
-{
-  ID_PLATAFORMA:1,
-  NOMBRE:'Nintendo Switch',
-},
 
-{
-  ID_PLATAFORMA:2,
-  NOMBRE:'PlayStation 5',
-},
-{
-  ID_PLATAFORMA:3,
-  NOMBRE:'Xbox Series X',
-},
-{
-  ID_PLATAFORMA:4,
-  NOMBRE:'PlayStation 4',
-}
-];
-  
-//#region Métodos
-constructor(private http:HttpClient) {
+  private urlBase='http://localhost:3000/api/';
+
+  //region métodos
+  constructor(private _httpClient: HttpClient) { 
+
+  }
+
+  getPlataformas():Observable<Plataforma[]>{
+    return this._httpClient.get<Plataforma[]>(this.urlBase+'plataformas');
+  }
+
+  getProducto(id:number | string):Observable<Plataforma>{
+    return this._httpClient.get<Plataforma>(this.urlBase+`plataforma/${id}`);
+  }
+
+
+
 }
 
-getPlataformasVideojuego(){
-  return this.plataformas;
-}
-
+export interface  Plataforma {
+  _id: string;            
+  nombre: string;        
+  descripcion: string;    
+  fecha_creacion: string | Date;  
 }

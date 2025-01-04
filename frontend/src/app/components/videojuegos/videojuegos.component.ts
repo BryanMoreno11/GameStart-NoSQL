@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { VideojuegosService } from '../../services/videojuegos.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlataformaService } from '../../services/plataforma.service';
-import { CarritoService } from '../../services/carrito.service';
+import { Plataforma, PlataformaService } from '../../services/plataforma.service';
+import { CarritoService, IProducto } from '../../services/carrito.service';
 import { RouterLink } from '@angular/router';
+import {  Producto, ProductosService } from '../../services/productos.service';
 @Component({
   selector: 'app-videojuegos',
   standalone: true,
@@ -14,9 +15,9 @@ import { RouterLink } from '@angular/router';
 })
 export class VideojuegosComponent implements OnInit {
   //#region Variables
-  videojuegos:any;
-  videojuegos_auxiliar:any;
-  plataformas:any;
+  productos:IProducto[]=[];
+  productos_auxiliar:IProducto[]=[];
+  plataformas:Plataforma[]=[];
   metodoOrdenamientoSeleccionado:string="defecto";
   plataforma:string="";
 
@@ -29,22 +30,37 @@ export class VideojuegosComponent implements OnInit {
     
   }
 
-  constructor(private videojuegos_service:VideojuegosService, private plataforma_service:PlataformaService,
-    private carrito_service:CarritoService){
+  constructor( private plataforma_service:PlataformaService,
+    private carrito_service:CarritoService, private _productoService:ProductosService) {
     
   }
 
-  agregarVideojuego(videojuego:any){
-    this.carrito_service.insertarProducto(videojuego,1);
+  agregarProducto(producto:IProducto){
+    if(this.carrito_service.validarStockProductoInsertar(producto,1)){
+      this.carrito_service.insertarProducto(producto,1);
+
+
+    }
+
   }
 
   obtenerVideojuegos(){
-    this.videojuegos= this.videojuegos_service.getVideojuegos();
-    this.videojuegos_auxiliar=this.videojuegos;
+  this._productoService.getProductos().subscribe(
+      (res:any)=>{
+        this.productos=res;
+        this.productos_auxiliar=res;
+        console.log("Los productos son ",this.productos);
+      }
+    );
   }
 
   obtenerPlataformas(){
-    this.plataformas=this.plataforma_service.getPlataformasVideojuego();
+    this.plataforma_service.getPlataformas().subscribe(
+      (res:any)=>{
+        this.plataformas=res;
+        console.log("Las plataformas son ",this.plataformas);
+      }
+    );
   }
 
   //Métodos de ordenamiento
@@ -63,25 +79,25 @@ export class VideojuegosComponent implements OnInit {
   }
 
 ordenarMenorMayor(){
-  this.videojuegos=this.videojuegos.sort((a:any,b:any)=>a.PRECIO-b.PRECIO);
+  this.productos=this.productos.sort((a:Producto,b:Producto)=>a.precio-b.precio);
 }
 
 ordenarMayormenor(){
-  this.videojuegos=this.videojuegos.sort((a:any,b:any)=>b.PRECIO-a.PRECIO);
+  this.productos=this.productos.sort((a:Producto,b:Producto)=>b.precio-a.precio);
 }
 
 ordenarDefecto(){
-  this.videojuegos=this.videojuegos.sort((a:any,b:any)=>a.TITULO.toLowerCase() < b.TITULO.toLowerCase() ? -1 : 1);
+  this.productos=this.productos.sort((a:Producto,b:Producto)=>a.nombre.toLowerCase() < b.nombre.toLowerCase() ? -1 : 1);
 
 }
 
 //Métodos de clasificación
 
 clasificarporCategoria(plataforma:string){
-   Object.assign(this.videojuegos,this.videojuegos_auxiliar);
+   Object.assign(this.productos,this.productos_auxiliar);
   this.ordenarMetodos(this.metodoOrdenamientoSeleccionado);
   if(plataforma!=""){
-    this.videojuegos=this.videojuegos.filter((videojuego:any)=> videojuego.NOMBRE_PLATAFORMA==plataforma);
+    this.productos=this.productos.filter((videojuego:Producto)=> videojuego.plataforma.nombre==plataforma);
   }
 }
 

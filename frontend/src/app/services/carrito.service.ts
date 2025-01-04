@@ -6,26 +6,17 @@ import Swal from 'sweetalert2';
 })
 export class CarritoService {
 //region Atributos
-carrito:Carrito={
-  subtotal_venta:0,
-  total_venta:0,
+carrito:ICarrito={
+  fecha_venta:new Date().toISOString().split('T')[0],
+  productos:[],
+  subtotal:0,
   iva:0,
-  cantidad_total:0
-}
-productos:Producto[]=[];
-msgAlert=(icon:any, text:string, timer:number, confirm:boolean)=>{Swal.fire({
-  icon: icon,
-  text: text,
-  toast: true,
-  position: 'top-start',
-  showConfirmButton: confirm,
-  timer: timer,
-  customClass: {
-    popup: 'custom-toast' // Agrega la clase de estilo personalizado
-  }
- 
-});} 
+  total:0,
+  cantidad:0
+};
+ iva = 0.15;
 
+//#region Métodos
 ngOnInit(): void {
   
 }
@@ -34,148 +25,217 @@ constructor() {
   this.cargarProductos();
 }
 
-//#region Métodos
-insertarProducto(videojuego:any,cantidad:number){
-  //Primero creamos el objeto producto
-  let producto:Producto={
-    videojuego: videojuego,
-    cantidad:cantidad,
-    precio_total:videojuego.PRECIO,
-    stock:videojuego.STOCK
-  }
-  producto.precio_total=producto.cantidad*producto.videojuego.PRECIO;
-  /*Buscamos en nuestro arreglo de productos un elemento que tenga el videojuego que se pasa como parámetro, en caso que no
-  este simplemente se lo agrega*/
-  let ob_producto=this.productos[this.obtenerPosicionProducto(producto)];
-  if(this.obtenerPosicionProducto(producto)==-1 ) {
-    this.productos.push(producto);
-    this.msgAlert("success","Producto agregado con éxito",1000,false);
-  }
-  /*En caso de que el videojuego ya se haya agregado, se verifica que la cantidad que tenía anteriormente sumada a la actual
-  sea menor o igual al stock del producto*/
-  else if(ob_producto.cantidad+cantidad<=videojuego.STOCK){
-    console.log("Producto agregado anteriormente");
-    ob_producto.cantidad+=cantidad;
-    ob_producto.precio_total= videojuego.PRECIO*ob_producto.cantidad;
-    this.msgAlert("success","Producto agregado con éxito",1000,false);
-
-  }else{
-    this.msgAlert("error",`No puedes añadir esa cantidad al carrito — tenemos ${videojuego.STOCK} existencias y ya haz añadido ${ob_producto.cantidad}`,3000,true);
-  }
-  localStorage.setItem("productos",JSON.stringify(this.productos));
-  this.efectuarCalculos();
-  console.log(this.carrito);
-}
-
-eliminarProducto(producto:Producto){
-  this.productos=this.productos.filter((item:Producto)=>item.videojuego.ID_VIDEOJUEGO_PLATAFORMA!=producto.videojuego.ID_VIDEOJUEGO_PLATAFORMA);
-  localStorage.setItem("productos",JSON.stringify(this.productos));
-  this.efectuarCalculos();
-}
-
 cargarProductos(){
-  let objeto=localStorage.getItem("productos");
-  let objeto_carrito=localStorage.getItem("carro");
-  if(objeto && objeto_carrito){
-    this.productos= JSON.parse(objeto);
-    this.carrito= JSON.parse(objeto_carrito);
+  let carrito=localStorage.getItem("carrito");
+  if(carrito){
+    
+    this.carrito= JSON.parse(carrito);
   }
 }
 
-setCantidad(producto:Producto,cantidad:number){
-  let articulo= this.productos[this.productos.indexOf(producto)];
-  if(cantidad<=producto.videojuego.STOCK){
-    articulo.cantidad=cantidad;
-    articulo.precio_total= producto.videojuego.PRECIO*cantidad;
-    localStorage.setItem("productos",JSON.stringify(this.productos));
-  }
-  else{
-    this.msgAlert("error",`No puedes añadir esa cantidad al carrito — tenemos ${producto.videojuego.STOCK} existencias`,3000,true);
-  }
-  this.efectuarCalculos();
+
+mostrarMensaje(titulo:string, mensaje:string, icono:any) {
+  Swal.fire({
+      title: titulo,
+      text: mensaje,
+      icon: icono
+    });
 }
 
-obtenerPosicionProducto(producto:any):number{
-    let item:any;
-    if(this.productos.length>0){
-      item= this.productos.find((ob:any)=>{
-         return ob.videojuego.ID_VIDEOJUEGO_PLATAFORMA==producto.videojuego.ID_VIDEOJUEGO_PLATAFORMA;
-        });
+msgAlert(icon:any, text:string, timer:number, confirm:boolean){
+  Swal.fire({
+    icon: icon,
+    text: text,
+    toast: true,
+    position: 'top-start',
+    showConfirmButton: confirm,
+    timer: timer,
+    customClass: {
+      popup: 'custom-toast' // Agrega la clase de estilo personalizado
     }
+  });
 
-    if(item){
-      return this.productos.indexOf(item);
+}
+
+ obtenerProductoCarrito(id_producto:number | string):IProducto | undefined {
+  return this.carrito.productos.find(
+    (producto:IProducto) => producto._id == id_producto
+  );
+}
+
+ validarStockProductoInsertar(producto:IProducto, cantidadActual:number) {
+  let cantidadTotal = 0;
+  let productoCarrito = this.obtenerProductoCarrito(producto._id);
+  if (productoCarrito && productoCarrito.cantidad) {
+    cantidadTotal = productoCarrito.cantidad + cantidadActual;
+  } else {
+    cantidadTotal = cantidadActual;
+  }
+  if (producto.stock >= cantidadTotal) {
+    return true;
+  } else {
+    let mensaje=`El producto cuenta con ${producto.stock} existencias`;
+    if(productoCarrito ){
+        mensaje+=` y actualmente tienes ${productoCarrito.cantidad} en el carrito`;
     }
-    else{
-      return -1;
+    this.mostrarMensaje("Error", mensaje, "error");
+    return false;
+  }
+}
+
+validarStockProductoModificar(producto:IProducto, cantidad:number) { 
+  if(producto.stock >= cantidad) {
+    return true;
+  } else {
+    let mensaje=`El producto cuenta con ${producto.stock} existencias`;
+    this.mostrarMensaje("Error", mensaje, "error");
+    return false;
+  }
+}
+
+insertarProducto(producto:IProducto, cantidad:number){
+    let importe=Math.round(producto.precio * cantidad*100)/100;
+    let objProducto:IProducto={
+      ...producto,
+      cantidad:cantidad,
+      importe:importe
     }
+    let productoCarrito = this.obtenerProductoCarrito(producto._id);
+    if (productoCarrito && productoCarrito.cantidad && productoCarrito.importe) {
+      productoCarrito.cantidad += cantidad;
+      productoCarrito.importe += importe;
+    } else {
+      this.carrito.productos.push(objProducto);
+    }
+    this.calculosCarrito();
+    localStorage.setItem("carrito",JSON.stringify(this.carrito));
+    this.msgAlert("success", "Producto agregado al carrito", 1500, true);
   
 }
 
-efectuarCalculos(){
+
+modificarProducto(producto:IProducto, cantidad:number) {
+  let productoCarrito = this.obtenerProductoCarrito(producto._id  );
+  if (productoCarrito) {
+    productoCarrito.cantidad = cantidad;
+    productoCarrito.importe = Math.round(productoCarrito.precio * productoCarrito.cantidad*100)/100;
+  }
+  console.log("Ahora el producto es ", productoCarrito);
+  this.calculosCarrito();
+  localStorage.setItem("carrito",JSON.stringify(this.carrito));
+}
+
+eliminarProductoCarrito(id: number | string) {
+  let producto = this.obtenerProductoCarrito(id);
+  if (producto) {
+    let posicion = this.carrito.productos.indexOf(producto);
+    this.carrito.productos.splice(posicion, 1);
+    this.calculosCarrito();
+    localStorage.setItem("carrito", JSON.stringify(this.carrito));
+    this.mostrarMensaje("success","Producto eliminado del carrito","success");
+  }
+}
+
+efectuarCompra(){
+  this.carrito={
+    fecha_venta:new Date().toISOString().split('T')[0],
+    productos:[],
+    subtotal:0,
+    iva:0,
+    total:0,
+    cantidad:0
+  };
+  localStorage.setItem("carrito",JSON.stringify(this.carrito));
+
+}
+
+ calculosCarrito() {
   this.calcularSubtotal();
   this.calcularIva();
   this.calcularTotal();
   this.calcularCantidad();
-  localStorage.setItem("carro",JSON.stringify(this.carrito));
 }
 
-calcularSubtotal(){
-   let subtotal= this.productos.reduce((accumulator:number,producto:any)=>accumulator+producto.precio_total,0);
-   this.carrito.subtotal_venta= Math.round(subtotal*100)/100;
+ calcularSubtotal() {
+  let subtotal = this.carrito.productos.reduce(
+    (accumulator, producto) => accumulator + (producto.importe ?? 0),    0
+  );
+  this.carrito.subtotal = Math.round(subtotal * 100) / 100;
 }
 
-calcularIva(){
-  let iva= this.productos.reduce((accumulator:number,producto:any)=>accumulator+(producto.precio_total*0.15),0);
-  this.carrito.iva= Math.round(iva*100)/100;
+ calcularIva() {
+  let valorIva = this.carrito.productos.reduce(
+    (accumulator, producto) => accumulator + (producto.importe ?? 0) * this.iva,
+    0
+  );
+  this.carrito.iva = Math.round(valorIva * 100) / 100;
 }
 
-calcularTotal(){
- let total=this.carrito.subtotal_venta+this.carrito.iva;
- this.carrito.total_venta=Math.round(total*100)/100;
+ calcularTotal() {
+  let total = this.carrito.subtotal + this.carrito.iva;
+  this.carrito.total = Math.round(total * 100) / 100;
 }
 
-calcularCantidad(){
-  this.carrito.cantidad_total=this.productos.reduce((accumulator:number, producto:any)=>accumulator+producto.cantidad,0);
-}
-
-efectuarCompra(){
-  this.productos=[];
-  this.carrito={} as Carrito;
-  localStorage.setItem("productos",JSON.stringify(this.productos));
-  localStorage.setItem("carro",JSON.stringify(this.carrito));
-
-}
-
-mensajeAlertaStock(producto:Producto){
-  this.msgAlert("error",`No puedes añadir esa cantidad al carrito — tenemos ${producto.videojuego.STOCK} existencias`,10000,true);
-
-}
-
-mensajeAlertaStockVideojuego(videojuego:any){
-  this.msgAlert("error",`No puedes añadir esa cantidad al carrito — tenemos ${videojuego.STOCK} existencias`,10000,true);
-
-}
-
-mensajeAlertaStockNegativo(){
-  this.msgAlert("error",`Debe ingresar valores positivos`,10000,true);
-
+ calcularCantidad() {
+  
+  this.carrito.cantidad = this.carrito.productos.reduce(
+    (accumulator, producto) => accumulator + (producto.cantidad??0),
+    0
+  );
 }
 
 }
-
 //#region Interfaces
-export interface Producto{
-  videojuego:any,
-  cantidad: number,
-  precio_total:number,
-  stock:number
+export interface IProducto {
+  _id: string;
+  nombre: string;
+  desarrolladora: string;
+  plataforma: {
+    nombre: string;
+    descripcion: string;
+    fecha_creacion: string;
+  };
+  genero: {
+    nombre: string;
+    descripcion: string;
+    fecha_creacion: string;
+  };
+  tipo: {
+    nombre: string;
+    descripcion: string;
+    fecha_creacion: string;
+  };
+  precio: number;
+  stock: number;
+  claves_digitales: string[] | null;
+  imagenes: string[];
+  fecha_creacion: string;
+  descripcion: string;
+  cantidad: number;
+  importe?: number;
 }
 
-export interface Carrito{
-  subtotal_venta:number,
-  total_venta:number,
-  iva:number,
-  cantidad_total:number
+
+export interface ICarrito {
+  _id?: string;
+  cliente?: {
+    _id: string;
+    cedula: string;
+    nombre: string;
+    apellido: string;
+    telefono: string;
+    correo: string;
+    contrasenia: string;
+    secret: string;
+    fecha_nacimiento: string;
+    fecha_registro: string;
+  };
+  fecha_venta: string;
+  productos: IProducto[];
+  subtotal: number;
+  iva: number;
+  total: number;
+  cantidad: number;
 }
+
 
