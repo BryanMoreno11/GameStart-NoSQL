@@ -107,6 +107,7 @@ export class CarritoComponent {
             text: 'En su correo podrá ver la factura',
             icon: 'success',
           });
+          console.log("El carrito es ", this.carrito);
           this.carrito=this.carrito_service.carrito;
 
         }
