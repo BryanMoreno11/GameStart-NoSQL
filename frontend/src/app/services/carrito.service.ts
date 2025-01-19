@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
 import Swal from 'sweetalert2';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +13,19 @@ import Swal from 'sweetalert2';
 export class CarritoService {
 //region Atributos
 carrito:ICarrito={
-  fecha_venta:new Date().toISOString().split('T')[0],
+  //Cliente de ejemplo
+  cliente: {
+    _id: "6766bc27c14a02639c07a821",
+    cedula: "1234567890",
+    nombre: "Carlos",
+    apellido: "Lopez",
+    telefono: "0981234567",
+    correo: "carlos.lopez@example.com",
+    contrasenia: "hashed_password",
+    secret: "secret",
+    fecha_nacimiento: new Date("1995-05-10T00:00:00Z"),
+    fecha_registro: new Date("2024-06-21T12:00:00Z")
+  },
   productos:[],
   subtotal:0,
   iva:0,
@@ -16,13 +34,19 @@ carrito:ICarrito={
 };
  iva = 0.15;
 
+urlBase='http://localhost:3000/api/';
+
 //#region Métodos
 ngOnInit(): void {
   
 }
 
-constructor() { 
+constructor(private _httpClient: HttpClient) { 
   this.cargarProductos();
+}
+
+saveVenta(carrito:ICarrito): Observable<VentaResponse> {
+  return this._httpClient.post<VentaResponse>(`${this.urlBase}ventas`, carrito);
 }
 
 cargarProductos(){
@@ -138,7 +162,6 @@ eliminarProductoCarrito(id: number | string) {
 
 efectuarCompra(){
   this.carrito={
-    fecha_venta:new Date().toISOString().split('T')[0],
     productos:[],
     subtotal:0,
     iva:0,
@@ -218,19 +241,7 @@ export interface IProducto {
 
 export interface ICarrito {
   _id?: string;
-  cliente?: {
-    _id: string;
-    cedula: string;
-    nombre: string;
-    apellido: string;
-    telefono: string;
-    correo: string;
-    contrasenia: string;
-    secret: string;
-    fecha_nacimiento: string;
-    fecha_registro: string;
-  };
-  fecha_venta: string;
+  cliente?: Cliente;
   productos: IProducto[];
   subtotal: number;
   iva: number;
@@ -238,4 +249,21 @@ export interface ICarrito {
   cantidad: number;
 }
 
+export interface VentaResponse {
+  message: string;
+  ventaId: string;
+}
+
+export interface Cliente {
+  _id: string;
+  cedula: string;
+  nombre: string;
+  apellido: string;
+  telefono: string;
+  correo: string;
+  contrasenia: string;
+  secret: string;
+  fecha_nacimiento: Date;
+  fecha_registro: Date;
+}
 

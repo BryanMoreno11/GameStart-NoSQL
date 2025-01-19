@@ -1,6 +1,14 @@
 <div class="container">
     <div class="selectores">
-        <select name="" id="" class="select" [(ngModel)]="plataforma" (change)="clasificarporCategoria(plataforma)">
+
+        <select name="" id="" class="select" [(ngModel)]="formato" (change)="clasificarporCategoria(plataforma,formato)" >
+            <option value="">Seleccione Formato</option>
+            <option value="Físico">Físico</option>
+            <option value="Digital">Digital</option>
+        </select>
+
+
+        <select name="" id="" class="select" [(ngModel)]="plataforma" (change)="clasificarporCategoria(plataforma,formato)">
             <option value="">Seleccione Consola</option>
             @for(plataforma of plataformas; track plataforma._id){
                 <option [value]="plataforma.nombre">{{plataforma.nombre}}</option>
@@ -13,6 +21,8 @@
             <option value="menorMayor">Ordenar por precio:bajo a alto</option>
             <option value="mayorMenor">Ordenar por precio:alto a bajo</option>
         </select>
+
+       
 
     </div>
   

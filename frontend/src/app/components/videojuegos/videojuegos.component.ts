@@ -20,6 +20,7 @@ export class VideojuegosComponent implements OnInit {
   plataformas:Plataforma[]=[];
   metodoOrdenamientoSeleccionado:string="defecto";
   plataforma:string="";
+  formato:string="";
 
 
 
@@ -93,11 +94,15 @@ ordenarDefecto(){
 
 //Métodos de clasificación
 
-clasificarporCategoria(plataforma:string){
+clasificarporCategoria(plataforma?:string, formato?:string){
    Object.assign(this.productos,this.productos_auxiliar);
   this.ordenarMetodos(this.metodoOrdenamientoSeleccionado);
   if(plataforma!=""){
     this.productos=this.productos.filter((videojuego:Producto)=> videojuego.plataforma.nombre==plataforma);
+  }
+  if(formato!=""){
+    console.log("El formato del videojuego es ", this.productos[0]);
+    this.productos=this.productos.filter((videojuego:Producto)=> videojuego.tipo.nombre==formato);
   }
 }
 

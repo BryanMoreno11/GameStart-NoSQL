@@ -2,13 +2,14 @@ import { Component } from '@angular/core';
 import {
   CarritoService,
  IProducto,
- ICarrito
+ ICarrito,
 } from '../../services/carrito.service';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-carrito',
@@ -21,8 +22,6 @@ export class CarritoComponent {
   //#region atributos
   productos: IProducto[] = [];
   carrito: ICarrito;
-  //Atributos para insertar en la BD
-  id_cliente: number;
   //Atributos para la factura
   vistaVenta: any;
   vistaVentaDetalle: any;
@@ -34,7 +33,6 @@ export class CarritoComponent {
   ) {
     this.productos = carrito_service.carrito.productos;
     this.carrito = carrito_service.carrito;
-    this.id_cliente = Number(localStorage.getItem('id_cliente'));
   }
 
   actualizarCantidad(producto: IProducto, cantidad: number) {
@@ -89,31 +87,47 @@ export class CarritoComponent {
     });
   }
 
-  realizarCompra() {
-    if (true) {
-      Swal.fire({
-        title: '¿Estás seguro de proceder con la compra?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, continuar',
-        cancelButtonText: 'Cancelar',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.carrito_service.efectuarCompra();
-          Swal.fire({
-            title: '¡Compra efectuada con éxito!',
-            text: 'En su correo podrá ver la factura',
-            icon: 'success',
-          });
-          console.log("El carrito es ", this.carrito);
-          this.carrito=this.carrito_service.carrito;
-
-        }
-      });
+  async realizarCompra() {
+    const confirm = await this.confirmarCompra();
+    if (confirm) {
+      try {
+        let respuesta= await this.registrarCompra();
+        console.log("La respuesta es",respuesta);
+        this.carrito_service.efectuarCompra();
+        this.mostrarMensaje('¡Compra efectuada con éxito!', 'En su correo podrá ver la factura', 'success');
+        this.carrito = this.carrito_service.carrito;
+      } catch (error:any) {
+       this.mostrarMensaje('¡Error!', error.message, 'error');
+      }
     }
   }
+
+  async registrarCompra(){
+   return await firstValueFrom (this.carrito_service.saveVenta(this.carrito));
+    
+  }
+
+  confirmarCompra(): Promise<boolean> {
+    return Swal.fire({
+      title: '¿Estás seguro de proceder con la compra?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, continuar',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => result.isConfirmed);
+  }
+
+  mostrarMensaje(titulo:string, mensaje:string, icono:any) {
+    Swal.fire({
+        title: titulo,
+        text: mensaje,
+        icon: icono
+      });
+  }
+
+
 
   verificarSesion() {
     const valor = localStorage.getItem('loginUsuario') === 'true';
