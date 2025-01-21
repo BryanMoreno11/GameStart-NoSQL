@@ -85,7 +85,26 @@ const createVenta = async (req, res) => {
       res.status(500).json({ error: "Error al crear la venta", details: error.message });
     }
   };
+
+  const getVentaById = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const db = client.db(dbName);
+      const venta = await db.collection(collectionName).findOne({ _id: new ObjectId(id) });
+  
+      if (!venta) {
+        return res.status(404).json({ error: 'Venta no encontrada' });
+      }
+  
+      res.json(venta);
+    } catch (error) {
+      res.status(500).json({ error: 'Error al obtener la Venta', details: error.message });
+    }
+  };
+  
   
   module.exports={
-    createVenta
+    createVenta,
+    getVentaById
   }

@@ -13,19 +13,7 @@ import { Observable } from 'rxjs';
 export class CarritoService {
 //region Atributos
 carrito:ICarrito={
-  //Cliente de ejemplo
-  cliente: {
-    _id: "6766bc27c14a02639c07a821",
-    cedula: "1234567890",
-    nombre: "Carlos",
-    apellido: "Lopez",
-    telefono: "0981234567",
-    correo: "carlos.lopez@example.com",
-    contrasenia: "hashed_password",
-    secret: "secret",
-    fecha_nacimiento: new Date("1995-05-10T00:00:00Z"),
-    fecha_registro: new Date("2024-06-21T12:00:00Z")
-  },
+ 
   productos:[],
   subtotal:0,
   iva:0,
@@ -47,6 +35,10 @@ constructor(private _httpClient: HttpClient) {
 
 saveVenta(carrito:ICarrito): Observable<VentaResponse> {
   return this._httpClient.post<VentaResponse>(`${this.urlBase}ventas`, carrito);
+}
+
+getVenta(id:string): Observable<Venta> {
+  return this._httpClient.get<Venta>(`${this.urlBase}ventas/${id}`);
 }
 
 cargarProductos(){
@@ -265,5 +257,16 @@ export interface Cliente {
   secret: string;
   fecha_nacimiento: Date;
   fecha_registro: Date;
+}
+
+export interface Venta{
+  _id: string;
+  cliente: Cliente;
+  fecha_venta: Date;
+  productos: IProducto[];
+  subtotal: number;
+  iva: number;
+  total: number;
+  clavesUsuario: any[];
 }
 

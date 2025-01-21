@@ -3,6 +3,7 @@ import {
   CarritoService,
  IProducto,
  ICarrito,
+ Cliente,
 } from '../../services/carrito.service';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -25,6 +26,19 @@ export class CarritoComponent {
   //Atributos para la factura
   vistaVenta: any;
   vistaVentaDetalle: any;
+   //Cliente de ejemplo
+   cliente:Cliente= {
+    _id: "6766bc27c14a02639c07a821",
+    cedula: "1234567890",
+    nombre: "Carlos",
+    apellido: "Lopez",
+    telefono: "0981234567",
+    correo: "carlos.lopez@example.com",
+    contrasenia: "hashed_password",
+    secret: "secret",
+    fecha_nacimiento: new Date("1995-05-10T00:00:00Z"),
+    fecha_registro: new Date("2024-06-21T12:00:00Z")
+  }
   //#region Métodos
   constructor(
     private carrito_service: CarritoService,
@@ -88,11 +102,13 @@ export class CarritoComponent {
   }
 
   async realizarCompra() {
+    this.carrito.cliente=this.cliente;
     const confirm = await this.confirmarCompra();
     if (confirm) {
       try {
         let respuesta= await this.registrarCompra();
-        console.log("La respuesta es",respuesta);
+        let venta= await this.obtenerVenta(respuesta.ventaId);
+        console.log("La venta es",venta);
         this.carrito_service.efectuarCompra();
         this.mostrarMensaje('¡Compra efectuada con éxito!', 'En su correo podrá ver la factura', 'success');
         this.carrito = this.carrito_service.carrito;
@@ -105,6 +121,10 @@ export class CarritoComponent {
   async registrarCompra(){
    return await firstValueFrom (this.carrito_service.saveVenta(this.carrito));
     
+  }
+
+  async obtenerVenta(ventaId:string){
+    return await firstValueFrom(this.carrito_service.getVenta(ventaId));
   }
 
   confirmarCompra(): Promise<boolean> {
