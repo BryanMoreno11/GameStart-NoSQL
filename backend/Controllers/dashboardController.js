@@ -291,8 +291,11 @@ async function estadisticasGenerales(req, res) {
       const usuariosRegistrados = await db.collection(clientesCollection).countDocuments();
   
       // Cantidad de ventas (contar documentos en la colección ventas)
-      const cantidadVentas = await db.collection(ventasCollection).countDocuments();
-  
+      const cantidadVentasQuery = await db.collection(ventasCollection).aggregate([
+        { $unwind: "$productos" }, 
+        { $group: { _id: null, total: { $sum: "$productos.cantidad" } } } // Sumar las cantidades
+      ]).toArray();
+    const cantidadVentas = cantidadVentasQuery[0].total;  
       // Número de empleados (contar documentos en la colección empleados)
       const numeroEmpleados = await db.collection(empleadosCollection).countDocuments();
   
