@@ -13,9 +13,12 @@ app.use(express.urlencoded({ extended: false }));
 const productosRoutes = require("./Routes/productosRoutes");
 const plataformaRoutes = require("./Routes/plataformasRoutes");
 const ventaRoutes=  require("./Routes/ventaRoutes");
+const dashboardRoutes = require("./Routes/dashboardRoutes");
 app.use("/api", productosRoutes);
 app.use("/api", plataformaRoutes);
 app.use("/api", ventaRoutes);
+app.use("/api", dashboardRoutes);
+
 
 // Inicio del servidor
 const PORT = process.env.PORT || 3000;

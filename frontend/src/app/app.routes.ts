@@ -8,7 +8,7 @@ import { AuthenticateQrComponent } from './components/authenticate-qr/authentica
 import { VideojuegosComponent } from './components/videojuegos/videojuegos.component';
 import { CarritoComponent } from './components/carrito/carrito.component';
 import LayoutComponent from './shared/components/layout/layout.component';
-import DashboardComponent from './bussines/dashboard/dashboard.component';
+import { DashboardComponent } from './bussines/dashboard/dashboard.component';
 import AdminEmpleadosComponent from './bussines/admin-empleados/admin-empleados.component';
 import AdminPedidosComponent from './bussines/admin-pedidos/admin-pedidos.component';
 import { LoginClientComponent } from './components/login-client/login-client.component';
@@ -27,6 +27,9 @@ export const routes: Routes = [
     {path:'reportes', component:ReportesComponent},
     { path: 'login-client', component: LoginClientComponent },
     { path: 'register-client', component: RegisterClientComponent },
+    { path: 'reportes', component: ReportesComponent },
+
+
   {
     path: 'admin',
     component: LayoutComponent,

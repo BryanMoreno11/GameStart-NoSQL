@@ -2,70 +2,52 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DashboardService {
-  //atributos
-  API_URL='http://localhost:3000/api/';
-  //#region Métodos
-  constructor(private http:HttpClient) {
+  // URL base de la API
+  API_URL = 'http://localhost:3000/api/';
 
-   }
+  constructor(private http: HttpClient) {}
 
-   getVideojuegosVentas(){
-    return this.http.get(`${this.API_URL}dashboard/videojuegosventas`);
+  // Métodos para obtener datos del dashboard
+  getVideojuegosVentas() {
+    return this.http.get(`${this.API_URL}dashboard/videojuegos/ventas`);
   }
 
-  getVideojuegosRecaudacion(){
-    return this.http.get(`${this.API_URL}dashboard/videojuegosrecaudacion`);
+  getVideojuegosRecaudacion() {
+    return this.http.get(`${this.API_URL}dashboard/videojuegos/recaudacion`);
   }
 
-  getGenerosVentas(){
-    return this.http.get(`${this.API_URL}dashboard/generosventas`);
+  getGenerosVentas() {
+    return this.http.get(`${this.API_URL}dashboard/generos/ventas`);
   }
 
-  getGenerosRecaudacion(){
-    return this.http.get(`${this.API_URL}dashboard/generosrecaudacion`);
-
+  getGenerosRecaudacion() {
+    return this.http.get(`${this.API_URL}dashboard/generos/recaudacion`);
   }
 
-  getPlataformasVentas(){
-    return this.http.get(`${this.API_URL}dashboard/plataformasventas`);
-
+  getPlataformasVentas() {
+    return this.http.get(`${this.API_URL}dashboard/plataformas/ventas`);
   }
 
-  getPlataformasRecaudacion(){
-    return this.http.get(`${this.API_URL}dashboard/plataformasrecaudacion`);
-
+  getPlataformasRecaudacion() {
+    return this.http.get(`${this.API_URL}dashboard/plataformas/recaudacion`);
   }
 
-  getCantidadProveedor(){
-    return this.http.get(`${this.API_URL}dashboard/cantidadproveedor`);
-
+  getCantidadProveedor() {
+    return this.http.get(`${this.API_URL}dashboard/proveedores/cantidad`);
   }
 
-  getRecaudacionProveedor(){
-    return this.http.get(`${this.API_URL}dashboard/recaudacionproveedor`);
-
+  getRecaudacionProveedor() {
+    return this.http.get(`${this.API_URL}dashboard/proveedores/recaudacion`);
   }
 
-  getTablas(tabla:Tabla){
-    return this.http.post(`${this.API_URL}dashboard/tablas`,tabla);
-
+  getCantidadVentasFormato() {
+    return this.http.get(`${this.API_URL}dashboard/formato/cantidad`);
   }
 
-  getOperacionesTablas(auditoria:Auditoria){
-    return this.http.post(`${this.API_URL}dashboard/operacionestabla`,auditoria);
+  getRecaudacionFormato() {
+    return this.http.get(`${this.API_URL}dashboard/formato/recaudacion`);
   }
-}
-
-export interface Auditoria{
-  tabla:string;
-  fecha_input:string;
-
-}
-
-export interface Tabla{
-  fecha_input:string;
-
 }
