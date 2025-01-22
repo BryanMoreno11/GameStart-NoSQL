@@ -28,6 +28,38 @@
   .button:hover {
     background: #e73741;
   }
+
+  .resumen-estadisticas {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    
+  }
+
+ 
+  
+  .resumen-estadisticas h1 {
+    text-align: center;
+    color: #095493;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+
+
+  
+  
+  canvas {
+    max-width: 100%; /* Asegurar que el canvas no se desborde */
+    height: auto; /* Mantener la proporción */
+  }
   
   @media (max-width: 768px) {
     .row {

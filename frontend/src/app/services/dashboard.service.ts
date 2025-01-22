@@ -50,4 +50,8 @@ export class DashboardService {
   getRecaudacionFormato() {
     return this.http.get(`${this.API_URL}dashboard/formato/recaudacion`);
   }
+
+  getEstadisticasGenerales() {
+    return this.http.get(`${this.API_URL}dashboard/estadisticas`);
+  }
 }

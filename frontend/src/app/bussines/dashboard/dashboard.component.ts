@@ -31,6 +31,8 @@ export class DashboardComponent implements OnInit {
   proveedoresRecaudacion: any;
   cantidadVentasFormato: any;
   recaudacionFormato: any;
+  estadisticasGenerales: any;
+
 
   constructor(private dashboardService: DashboardService) {}
 
@@ -84,6 +86,11 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.getRecaudacionFormato().subscribe((res) => {
       this.recaudacionFormato = res;
       this.graficoRecaudacionFormato();
+    });
+
+    this.dashboardService.getEstadisticasGenerales().subscribe((res) => {
+      this.estadisticasGenerales = res;
+      this.dibujarResumenEstadisticas();
     });
   }
 
@@ -426,6 +433,88 @@ export class DashboardComponent implements OnInit {
       },
     });
   }
+
+
+
+
+  
+  dibujarResumenEstadisticas() {
+    const canvas = document.getElementById('ResumenEstadisticas') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) return;
+
+    // Limpiar el canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Estilos
+    const backgroundColor = '#ffffff';
+    const textColor = '#333333';
+    const headerColor = '#095493';
+    const rowColor1 = '#f9f9f9';
+    const rowColor2 = '#ffffff';
+    const padding = 20;
+    const rowHeight = 40;
+    const fontSize = 16;
+
+    // Dibujar fondo
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Dibujar encabezado
+    ctx.fillStyle = headerColor;
+    ctx.fillRect(0, 0, canvas.width, rowHeight);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `bold ${fontSize}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Resumen General', canvas.width / 2, rowHeight / 1.5);
+
+    // Datos de la tabla
+    const datos = [
+      { label: 'Dinero Recaudado', value: `$${this.estadisticasGenerales.dineroRecaudado.toLocaleString('en-US', { minimumFractionDigits: 2 })}` },
+      { label: 'Usuarios Registrados', value: this.estadisticasGenerales.usuariosRegistrados },
+      { label: 'Cantidad de Ventas', value: this.estadisticasGenerales.cantidadVentas },
+      { label: 'Número de Empleados', value: this.estadisticasGenerales.numeroEmpleados },
+      { label: 'Videojuegos Disponibles', value: this.estadisticasGenerales.cantidadVideojuegos },
+      { label: 'Videojuegos Físicos', value: this.estadisticasGenerales.videojuegosFisico },
+      { label: 'Videojuegos Digitales', value: this.estadisticasGenerales.videojuegosDigital },
+      { label: 'Dinero Invertido', value: `$${this.estadisticasGenerales.dineroInvertido.toLocaleString('en-US', { minimumFractionDigits: 2 })}` },
+    ];
+
+    // Dibujar filas de la tabla
+    ctx.font = `${fontSize}px Arial`;
+    ctx.textAlign = 'left';
+
+    datos.forEach((item, index) => {
+      const y = rowHeight + index * rowHeight;
+
+      // Alternar colores de fila
+      ctx.fillStyle = index % 2 === 0 ? rowColor1 : rowColor2;
+      ctx.fillRect(0, y, canvas.width, rowHeight);
+
+      // Dibujar texto
+      ctx.fillStyle = textColor;
+      ctx.fillText(item.label, padding, y + rowHeight / 1.5);
+
+      ctx.fillStyle = headerColor;
+      ctx.textAlign = 'right';
+      ctx.fillText(item.value, canvas.width - padding, y + rowHeight / 1.5);
+      ctx.textAlign = 'left';
+    });
+
+    // Dibujar bordes
+    ctx.strokeStyle = '#dddddd';
+    ctx.beginPath();
+    ctx.moveTo(0, rowHeight);
+    ctx.lineTo(canvas.width, rowHeight);
+    datos.forEach((_, index) => {
+      const y = rowHeight + index * rowHeight;
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+    });
+    ctx.stroke();
+  }
+
   
   // Guardar como PDF
   saveAsPDF() {

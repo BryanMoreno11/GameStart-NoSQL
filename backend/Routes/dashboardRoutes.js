@@ -11,7 +11,8 @@ var {
     cantidadPedidosProveedor,
     recaudacionPedidosProveedor,
     cantidadVentasFormato,
-    recaudacionFormato
+    recaudacionFormato, 
+    estadisticasGenerales
 } = require("../Controllers/dashboardController");
 
 
@@ -33,6 +34,8 @@ router.get("/dashboard/proveedores/recaudacion", recaudacionPedidosProveedor);
 //Rutas de formato
 router.get("/dashboard/formato/cantidad", cantidadVentasFormato);
 router.get("/dashboard/formato/recaudacion", recaudacionFormato);
+//estadiísticas generales
+router.get("/dashboard/estadisticas", estadisticasGenerales);
 
 
 
