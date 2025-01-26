@@ -7,7 +7,7 @@ const collectionProductosName = 'productos';
 
 
 const createVenta = async (req, res) => {
-    const { cliente, fecha_venta, productos, subtotal, iva, total } = req.body;
+    const { cliente,  productos, subtotal, iva, total } = req.body;
   
     try {
       const db = client.db(dbName); 
@@ -67,7 +67,7 @@ const createVenta = async (req, res) => {
       // Registrar la venta en la colección de ventas
       const nuevaVenta = {
         cliente,
-        fecha_venta: new Date(fecha_venta),
+        fecha_venta: new Date(),
         productos,
         subtotal,
         iva,
