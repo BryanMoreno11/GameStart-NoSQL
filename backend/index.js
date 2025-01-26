@@ -11,10 +11,17 @@ app.use(express.urlencoded({ extended: false }));
 
 // Rutas
 const productosRoutes = require("./Routes/productosRoutes");
+const plataformaRoutes = require("./Routes/plataformasRoutes");
+const ventaRoutes = require("./Routes/ventaRoutes");
+const dashboardRoutes = require("./Routes/dashboardRoutes");
 const clientesRoutes = require("./Routes/clientesRoutes");
 const usuariosRoutes = require('./routes/usuariosRoutes');
 const verifyRoutes = require('./routes/verifyRoutes');
 app.use("/api", productosRoutes);
+app.use("/api", plataformaRoutes);
+app.use("/api", ventaRoutes);
+app.use("/api", dashboardRoutes);
+
 app.use("/api", clientesRoutes);
 app.use('/api', usuariosRoutes);
 app.use('/api', verifyRoutes);

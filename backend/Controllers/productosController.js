@@ -34,14 +34,11 @@ const createProducto = async(req, res) => {
 // Obtener todos los videojuegos
 const getAllProductos = async(req, res) => {
     try {
-        await client.connect();
         const db = client.db(dbName);
-        const videojuegos = await db.collection(collectionName).find({}).toArray();
+        const videojuegos = await db.collection(collectionName).find({}).sort({ nombre: 1 }).toArray();
         res.json(videojuegos);
     } catch (error) {
         res.status(500).json({ error: 'Error al listar los videojuegos', details: error.message });
-    } finally {
-        await client.close();
     }
 };
 

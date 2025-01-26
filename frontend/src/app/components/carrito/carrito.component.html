@@ -5,13 +5,13 @@
 </head>
 
 <div class="container">
-    @if(!carrito.cantidad_total){
+    @if(!carrito.cantidad){
     <div>
         <h1>Carrito</h1>
         <p>No tienes ningún producto en el carrito, que esperas a comprar un producto!</p>
         <a routerLink="/videojuegos">Comprar Videojuegos</a>
     </div>
-    } @if(carrito.cantidad_total>0){
+    } @if(carrito.cantidad>0){
     <table class="productos">
         <thead class="encabezado">
             <tr>
@@ -24,24 +24,24 @@
         <hr>
 
         <tbody>
-            @for(producto of productos;track producto.videojuego.ID_VIDEOJUEGO_PLATAFORMA){
+            @for(producto of carrito.productos;track producto._id){
             <tr class="fila">
                 <td class="contenido">
 
                     <div class="imagen">
-                        <img [src]="producto.videojuego.IMAGEN[0]" alt="">
+                        <img [src]="producto.imagenes[0]" alt="">
                     </div>
 
                     <div class="informacion">
-                        <p>{{producto.videojuego.TITULO}}</p>
-                        <p>{{producto.videojuego.PRECIO}}</p>
+                        <p>{{producto.nombre}}</p>
+                        <p>{{producto.precio}}</p>
                         <div class="botones">
                             <div class="quantity-input">
                                 <button (click)="decrementar(producto)" class="quantity-btn decrement">-</button>
                                 <input (change)="actualizarCantidad(producto, producto.cantidad)" [(ngModel)]="producto.cantidad" type="number" class="quantity" min="0" value="1">
                                 <button (click)="aumentar(producto)" class="quantity-btn increment">+</button>
                             </div>
-                            <button (click)="eliminarProducto(producto)" class="eliminar-btn">Eliminar</button>
+                            <button (click)="eliminarProducto(producto._id)" class="eliminar-btn">Eliminar</button>
                         </div>
 
                     </div>
@@ -53,9 +53,9 @@
     </table>
 
     <aside>
-        <h2> Subtotal: {{carrito.subtotal_venta}}$</h2>
+        <h2> Subtotal: {{carrito.subtotal}}$</h2>
         <h2>Iva: {{carrito.iva}}$</h2>
-        <h2> Total: {{carrito.total_venta}}$</h2>
+        <h2> Total: {{carrito.total}}$</h2>
         <button (click)="realizarCompra()">Finalizar Compra</button>
         <a routerLink="/videojuegos"><i> <- Seguir comprando</i></a>
     </aside>

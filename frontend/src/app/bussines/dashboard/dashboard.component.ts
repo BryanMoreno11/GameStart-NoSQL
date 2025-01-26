@@ -1,784 +1,530 @@
 import { Component, OnInit } from '@angular/core';
-import {Chart, registerables} from 'chart.js'
+import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { Auditoria, DashboardService, Tabla } from '../../services/dashboard.service';
+import { DashboardService } from '../../services/dashboard.service';
 import jsPDF from 'jspdf';
-import { FormsModule } from '@angular/forms';
+
 Chart.register(...registerables);
 Chart.register(ChartDataLabels);
 Chart.defaults.set('plugins.datalabels', {
   color: 'black',
   align: 'end',
   font: {
-      weight: 'bold'
-  }
+    weight: 'bold',
+  },
 });
+
 @Component({
   selector: 'app-dashboard',
-  standalone: true,
-  imports: [FormsModule],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+  styleUrls: ['./dashboard.component.css'],
 })
-export default class DashboardComponent {
-  //#region variables
-chart:any;
-today = new Date();
-maxDate=this.formatearFecha(this.today);
-//atributos para la tabla auditoria
-auditoria:Auditoria={
- tabla:"plataforma",
- fecha_input: "2024-07-20"
-};
-
-tabla:Tabla={
- fecha_input: "2024-07-20"
-
-}
-
-videojuegosVentas:any;
-videojuegosRecaudacion:any;
-generosVentas:any;
-generosRecaudacion:any;
-plataformasVentas:any;
-plataformasRecaudacion:any;
-proveedoresVentas:any;
-proveedoresRecaudacion:any
-tablas:any;
-operacionesTablas:any;
-//Métodos
-constructor(private dashboard_service:DashboardService){
-
-}
-
-ngOnInit():void{
- //Obtener data
- this.dashboard_service.getVideojuegosVentas().subscribe(res=>{
-   this.videojuegosVentas= res;
-   this.graficoVideojuegosVentas();
- });
-
- this.dashboard_service.getVideojuegosRecaudacion().subscribe(res=>{
-   this.videojuegosRecaudacion= res;
-   this.graficoVideojuegosRecaudacion();
-   console.log(this.videojuegosRecaudacion)
- });
-
- this.dashboard_service.getGenerosVentas().subscribe(
-   res=>{
-     this.generosVentas=res;
-     this.graficoGeneroVentas();
-     console.log(this.generosVentas);
-   }
- );
-
- this.dashboard_service.getGenerosRecaudacion().subscribe(
-   res=>{
-     this.generosRecaudacion=res;
-     this.graficoGeneroRecaudacion();
-   }
-
- );
-
- this.dashboard_service.getPlataformasVentas().subscribe(
-   res=>{
-     this.plataformasVentas=res;
-     this.graficoPlataformasVentas();
-   }
- );
-
- this.dashboard_service.getPlataformasRecaudacion().subscribe(
-   res=>{
-     this.plataformasRecaudacion=res;
-     this.graficoPlataformasRecaudacion();
-   }
- );
-
- this.dashboard_service.getCantidadProveedor().subscribe(
-   res=>{
-     this.proveedoresVentas=res;
-     this.graficoProveedoresVentas();
-   }
-
- );
-
- this.dashboard_service.getRecaudacionProveedor().subscribe(
-   res=>{
-     this.proveedoresRecaudacion=res;
-     this.graficoProveedoresRecaudacion();
-   }
-
- );
-
- this.dashboard_service.getTablas(this.tabla).subscribe(
-   res=>{
-     console.log("el resultado es ", res)
-     this.tablas=res;
-     this.dashboard_service.getOperacionesTablas(this.auditoria).subscribe(
-       res=>{
-         this.operacionesTablas=res;
-         this.graficoOperacionesTabla();
-       }
-     );
-   }
- );
-
-
-}
-
-
-
-change(){
- this.dashboard_service.getOperacionesTablas(this.auditoria).subscribe(
-   res=>{
-     this.operacionesTablas=res;
-     this.graficoOperacionesTabla();
-   }
- );
-}
-
-changeFecha(){
- this.tabla.fecha_input= this.auditoria.fecha_input;
- this.dashboard_service.getTablas(this.tabla).subscribe(
-   res=>{
-     this.tablas=res;
-     console.log("las tablas luego de cambiar la fecha", this.tablas)
-     this.dashboard_service.getOperacionesTablas(this.auditoria).subscribe(
-       res=>{
-         this.operacionesTablas=res;
-         this.graficoOperacionesTabla();
-       }
-     );
-   }
- );
-}
-
-
-
-
-
-formatearFecha(fecha:Date):string{
- let yyyy = fecha.getFullYear();
- let mm = String(fecha.getMonth() + 1).padStart(2, '0'); // Los meses empiezan desde 0
- let dd = String(fecha.getDate()).padStart(2, '0');
- return `${yyyy}-${mm}-${dd}`
-
-}
-
-saveAsPDF() {
-
- let index = 1;
- let pdf = new jsPDF({
-     orientation: 'landscape',
-     unit: 'px',
-     format: 'a4',
-     compress: true,
- })
- const canvas = document.querySelectorAll("canvas");
- let pageWidth = 400;
- let pageHeight = 400;
- index = 1;
- canvas.forEach((canva) => {
-     pdf.addImage(canva, 'PNG', 10, 10, pageWidth, pageHeight, `img${index}`, "FAST");
-     if (index < canvas.length) {
-         pdf.addPage();
-     }
-     index++;
- });
- pdf.save('Reporte.pdf');
-}
-
-//#region graficos
-
-generarColores(longitug:number) {
- var colors = [];
- const randomNum = () => Math.floor(Math.random() * (235 - 52 + 1) + 52);
- const randomRGB = () => `rgb(${randomNum()}, ${randomNum()}, ${randomNum()})`;
- for (let i = 0; i < longitug; i++) {
-     colors.push(randomRGB());
- }
- return colors;
-}
-
-
-graficoVideojuegosVentas(){
- const videojuegos = Object.keys(this.videojuegosVentas);
- const cantidades = Object.values(this.videojuegosVentas);
- let colores=this.generarColores(cantidades.length);
- const ctx = document.getElementById("VentaVideojuegos") as HTMLCanvasElement;
- var chart = new Chart(ctx, {
-   type: 'bar',
-   data: {
-     labels: videojuegos, 
-     datasets: [{
-       label: "Videojuegos Ventas",
-       data:cantidades, 
-       backgroundColor: colores, 
-       borderColor: colores,
-       borderWidth: 2
-     }]
-   },
-   options: {     
-     maintainAspectRatio: false,     
-
-     indexAxis: 'y',
-
-     responsive: true,
-     scales: {
-       y: {
-         beginAtZero: true,
-         ticks: {
-           font: {
-             size:10,
-             family: 'Verdana',
-             weight: 'bold'
-           }
-         }
-       },
-       x: {
-         beginAtZero: true,
-         ticks: {
-           font: {
-             size:15,
-             family: 'Verdana',
-             weight: 'bold'
-           }
-         }
-       }
-       
-     },
-     plugins: {
-       datalabels: {
-         display: true,
-
-     },
-       legend: {
-         labels: {
-           font: {
-             size: 20,
-             family:'Verdana',
-             weight: 'bold'
-
-         }
-         }
-       }
-       
-     }
-   }
- });
-}
-
-graficoVideojuegosRecaudacion(){
- const videojuegos = Object.keys(this.videojuegosRecaudacion);
- const cantidades = Object.values(this.videojuegosRecaudacion);
- let colores=this.generarColores(cantidades.length);
- const ctx = document.getElementById("RecaudacionVideojuegos") as HTMLCanvasElement;
- var chart = new Chart(ctx, {
-   type: 'bar',
-   data: {
-     labels: videojuegos, 
-     datasets: [{
-       label: "Videojuegos Recaudación",
-       data:cantidades, 
-       backgroundColor: colores, 
-       borderColor: colores,
-       borderWidth: 2
-     }]
-   },
-   options: {
-     maintainAspectRatio: false,     
-     indexAxis: 'y',
-
-     responsive: true,
-     scales: {
-       y: {
-         beginAtZero: true,
-         ticks: {
-           font: {
-             size:10,
-             family: 'Verdana',
-             weight: 'bold'
-           }
-         }
-       },
-       x: {
-         beginAtZero: true,
-         ticks: {
-           font: {
-             size:15,
-             family: 'Verdana',
-             weight: 'bold'
-           }
-         }
-       }
-       
-     },
-     plugins: {
-       datalabels: {
-         display: true,
-         formatter: function(value, context) {
-           // Formatear el valor como moneda
-           return '$' + value.toLocaleString('en-US', { minimumFractionDigits: 2 });
-       }
-
-     },
-    
-       legend: {
-         labels: {
-           font: {
-             size: 20,
-             family:'Verdana',
-             weight: 'bold'
-
-         }
-         }
-       }
-       
-     }
-   }
- });
-}
-
-graficoGeneroVentas(){
- const generos = Object.keys(this.generosVentas);
- const cantidades = Object.values(this.generosVentas);
- let colores=this.generarColores(cantidades.length);
- const ctx = document.getElementById("VentaGeneros") as HTMLCanvasElement;
- var myCircleGraph  = new Chart(ctx, {
-   type: 'pie',
-   data: {
-     labels: generos, 
-     datasets: [{
-       label: "Videojuegos Ventas",
-       data:cantidades, 
-       backgroundColor: colores, 
-       borderColor: colores,
-       borderWidth: 2
-     }]
-   },
-   options: {     
-     plugins: {    
-       title: {
-         display: true,
-         text: 'Porcentaje de Ventas por Género'
-     },
-       datalabels: {
-         formatter: (value, ctx) => {
-
-           let sum = 0;
-           let dataArr = ctx.chart.data.datasets[0].data;
-           dataArr.map(data => {
-               sum += Number(data);
-           });
-           let percentage = (value * 100 / sum).toFixed(2) + "%";
-           return percentage;
-
-
-       },
-       color: 'black',
-
-     },
-     legend: {
-       display: true,
-       position: "top",
-       labels: {
-           boxWidth: 10,
-       }
-   }
-       
-     }
-   }
- });
-}
-
-
-graficoGeneroRecaudacion(){
- const generos = Object.keys(this.generosRecaudacion);
- const cantidades = Object.values(this.generosRecaudacion);
- let colores=this.generarColores(cantidades.length);
- const ctx = document.getElementById("RecaudacionGeneros") as HTMLCanvasElement;
- var myDonutGraph  = new Chart(ctx, {
-   type: 'doughnut',
-   data: {
-     labels: generos, 
-     datasets: [{
-       label: "Videojuegos Ventas",
-       data:cantidades, 
-       backgroundColor: colores, 
-       borderColor: colores,
-       borderWidth: 2
-     }]
-   },
-   options: {     
-     plugins: {    
-       title: {
-         display: true,
-         text: 'Porcentaje de Recaudación por Género'
-     },
-       datalabels: {
-         formatter: (value, ctx) => {
-
-           let sum = 0;
-           let dataArr = ctx.chart.data.datasets[0].data;
-           dataArr.map(data => {
-               sum += Number(data);
-           });
-           let percentage = (value * 100 / sum).toFixed(2) + "%";
-           return percentage;
-
-
-       },
-       color: 'black',
-
-     },
-     legend: {
-       display: true,
-       position: "top",
-       labels: {
-           boxWidth: 10,
-       }
-   }
-       
-     }
-   }
- });
-}
-
-graficoPlataformasVentas(){
- const plataformas = Object.keys(this.plataformasVentas);
- const cantidades = Object.values(this.plataformasVentas);
- let colores=this.generarColores(cantidades.length);
- const ctx = document.getElementById("VentaPlataformas") as HTMLCanvasElement;
- var chart = new Chart(ctx, {
-   type: 'bar',
-   data: {
-     labels: plataformas, 
-     datasets: [{
-       label:"Ventas por Plataforma",
-       data:cantidades, 
-       backgroundColor: colores, 
-       borderColor: colores,
-       borderWidth: 2
-     }]
-   },
-   options: {     
-     
-
-     responsive: true,
-     scales: {
-       y: {
-         beginAtZero: true,
-         ticks: {
-           font: {
-             size:10,
-             family: 'Verdana',
-             weight: 'bold'
-           }
-         }
-       },
-       x: {
-         beginAtZero: true,
-         ticks: {
-           font: {
-             size:15,
-             family: 'Verdana',
-             weight: 'bold'
-           }
-         }
-       }
-       
-     },
-     plugins: {
-       datalabels: {
-         display: true,
-
-     },
-       legend: {
-         labels: {
-           font: {
-             size: 20,
-             family:'Verdana',
-             weight: 'bold'
-
-         }
-         }
-       }
-       
-     }
-   }
- });
-}
-
-
-graficoPlataformasRecaudacion(){
- const videojuegos = Object.keys(this.plataformasRecaudacion);
- const cantidades = Object.values(this.plataformasRecaudacion);
- let colores=this.generarColores(cantidades.length);
- const ctx = document.getElementById("RecaudacionPlataformas") as HTMLCanvasElement;
- var chart = new Chart(ctx, {
-   type: 'bar',
-   data: {
-     labels: videojuegos, 
-     datasets: [{
-       label: "Recaudación por Plataforma",
-       data:cantidades, 
-       backgroundColor: colores, 
-       borderColor: colores,
-       borderWidth: 2
-     }]
-   },
-   options: {     
-
-     indexAxis: 'y',
-
-     responsive: true,
-     scales: {
-       y: {
-         beginAtZero: true,
-         ticks: {
-           font: {
-             size:10,
-             family: 'Verdana',
-             weight: 'bold'
-           }
-         }
-       },
-       x: {
-         beginAtZero: true,
-         ticks: {
-           font: {
-             size:15,
-             family: 'Verdana',
-             weight: 'bold'
-           }
-         }
-       }
-       
-     },
-     plugins: {
-       datalabels: {
-         display: true,
-         formatter: function(value, context) {
-           // Formatear el valor como moneda
-           return '$' + value.toLocaleString('en-US', { minimumFractionDigits: 2 });
-       }
-     },
-       legend: {
-         labels: {
-           font: {
-             size: 20,
-             family:'Verdana',
-             weight: 'bold'
-
-         }
-         }
-       }
-       
-     }
-   }
- });
-}
-
-graficoProveedoresRecaudacion(){
- const videojuegos = Object.keys(this.proveedoresRecaudacion);
- const cantidades = Object.values(this.proveedoresRecaudacion);
- let colores=this.generarColores(cantidades.length);
- const ctx = document.getElementById("RecaudacionProveedor") as HTMLCanvasElement;
- var chart = new Chart(ctx, {
-   type: 'bar',
-   data: {
-     labels: videojuegos, 
-     datasets: [{
-       label: "Recaudación por Proveedor",
-       data:cantidades, 
-       backgroundColor: colores, 
-       borderColor: colores,
-       borderWidth: 2
-     }]
-   },
-   options: {     
-
-     indexAxis: 'y',
-
-     responsive: true,
-     scales: {
-       y: {
-         beginAtZero: true,
-         ticks: {
-           font: {
-             size:10,
-             family: 'Verdana',
-             weight: 'bold'
-           }
-         }
-       },
-       x: {
-         beginAtZero: true,
-         ticks: {
-           font: {
-             size:15,
-             family: 'Verdana',
-             weight: 'bold'
-           }
-         }
-       }
-       
-     },
-     plugins: {
-       datalabels: {
-         display: true,
-         formatter: function(value, context) {
-           // Formatear el valor como moneda
-           return '$' + value.toLocaleString('en-US', { minimumFractionDigits: 2 });
-       }
-     },
-       legend: {
-         labels: {
-           font: {
-             size: 20,
-             family:'Verdana',
-             weight: 'bold'
-
-         }
-         }
-       }
-       
-     }
-   }
- });
-}
-
-graficoProveedoresVentas(){
- const plataformas = Object.keys(this.proveedoresVentas);
- const cantidades = Object.values(this.proveedoresVentas);
- let colores=this.generarColores(cantidades.length);
- const ctx = document.getElementById("CantidadProveedor") as HTMLCanvasElement;
- var chart = new Chart(ctx, {
-   type: 'bar',
-   data: {
-     labels: plataformas, 
-     datasets: [{
-       label:"Ventas por Proveedor",
-       data:cantidades, 
-       backgroundColor: colores, 
-       borderColor: colores,
-       borderWidth: 2
-     }]
-   },
-   options: {     
-     
-
-     responsive: true,
-     scales: {
-       y: {
-         beginAtZero: true,
-         ticks: {
-           font: {
-             size:10,
-             family: 'Verdana',
-             weight: 'bold'
-           }
-         }
-       },
-       x: {
-         beginAtZero: true,
-         ticks: {
-           font: {
-             size:15,
-             family: 'Verdana',
-             weight: 'bold'
-           }
-         }
-       }
-       
-     },
-     plugins: {
-       datalabels: {
-         display: true,
-
-     },
-       legend: {
-         labels: {
-           font: {
-             size: 20,
-             family:'Verdana',
-             weight: 'bold'
-
-         }
-         }
-       }
-       
-     }
-   }
- });
-}
-
-graficoOperacionesTabla(){
- if (this.chart) {
-   this.chart.destroy();
- }
- const operaciones = Object.keys(this.operacionesTablas);
- const cantidades = Object.values(this.operacionesTablas);
- let colores=this.generarColores(cantidades.length);
- const ctx = document.getElementById("OperacionesTablas") as HTMLCanvasElement;
- this.chart = new Chart(ctx, {
-   type: 'bar',
-   data: {
-     labels: operaciones, 
-     datasets: [{
-       label:"Estadísticas de Auditoría",
-       data:cantidades, 
-       backgroundColor: colores, 
-       borderColor: colores,
-       borderWidth: 2
-     }]
-   },
-   options: {     
-     
-     maintainAspectRatio: false,     
-
-     responsive: true,
-     scales: {
-       y: {
-         beginAtZero: true,
-         ticks: {
-           font: {
-             size:10,
-             family: 'Verdana',
-             weight: 'bold'
-           }
-         }
-       },
-       x: {
-         beginAtZero: true,
-         ticks: {
-           font: {
-             size:15,
-             family: 'Verdana',
-             weight: 'bold'
-           }
-         }
-       }
-       
-     },
-     plugins: {
-       datalabels: {
-         display: true,
-
-     },
-       legend: {
-         labels: {
-           font: {
-             size: 20,
-             family:'Verdana',
-             weight: 'bold'
-
-         }
-         }
-       }
-       
-     }
-   }
- });
-}
+export class DashboardComponent implements OnInit {
+  // Variables para almacenar los datos
+  videojuegosVentas: any;
+  videojuegosRecaudacion: any;
+  generosVentas: any;
+  generosRecaudacion: any;
+  plataformasVentas: any;
+  plataformasRecaudacion: any;
+  proveedoresVentas: any;
+  proveedoresRecaudacion: any;
+  cantidadVentasFormato: any;
+  recaudacionFormato: any;
+  estadisticasGenerales: any;
+
+
+  constructor(private dashboardService: DashboardService) {}
+
+  ngOnInit(): void {
+    // Obtener datos y renderizar gráficos
+    this.dashboardService.getVideojuegosVentas().subscribe((res) => {
+      this.videojuegosVentas = res;
+      this.graficoVideojuegosVentas();
+    });
+
+    this.dashboardService.getVideojuegosRecaudacion().subscribe((res) => {
+      this.videojuegosRecaudacion = res;
+      this.graficoVideojuegosRecaudacion();
+    });
+
+    this.dashboardService.getGenerosVentas().subscribe((res) => {
+      this.generosVentas = res;
+      this.graficoGeneroVentas();
+    });
+
+    this.dashboardService.getGenerosRecaudacion().subscribe((res) => {
+      this.generosRecaudacion = res;
+      this.graficoGeneroRecaudacion();
+    });
+
+    this.dashboardService.getPlataformasVentas().subscribe((res) => {
+      this.plataformasVentas = res;
+      this.graficoPlataformasVentas();
+    });
+
+    this.dashboardService.getPlataformasRecaudacion().subscribe((res) => {
+      this.plataformasRecaudacion = res;
+      this.graficoPlataformasRecaudacion();
+    });
+
+    this.dashboardService.getCantidadProveedor().subscribe((res) => {
+      this.proveedoresVentas = res;
+      this.graficoProveedoresVentas();
+    });
+
+    this.dashboardService.getRecaudacionProveedor().subscribe((res) => {
+      this.proveedoresRecaudacion = res;
+      this.graficoProveedoresRecaudacion();
+    });
+
+    this.dashboardService.getCantidadVentasFormato().subscribe((res) => {
+      this.cantidadVentasFormato = res;
+      this.graficoCantidadVentasFormato();
+    });
+
+    this.dashboardService.getRecaudacionFormato().subscribe((res) => {
+      this.recaudacionFormato = res;
+      this.graficoRecaudacionFormato();
+    });
+
+    this.dashboardService.getEstadisticasGenerales().subscribe((res) => {
+      this.estadisticasGenerales = res;
+      this.dibujarResumenEstadisticas();
+    });
+  }
+
+  // Métodos para generar gráficos
+  generarColores(longitud: number) {
+    const colors = [];
+    const randomNum = () => Math.floor(Math.random() * (235 - 52 + 1) + 52);
+    const randomRGB = () => `rgb(${randomNum()}, ${randomNum()}, ${randomNum()})`;
+    for (let i = 0; i < longitud; i++) {
+      colors.push(randomRGB());
+    }
+    return colors;
+  }
+
+  graficoVideojuegosVentas() {
+    const videojuegos = Object.keys(this.videojuegosVentas);
+    const cantidades = Object.values(this.videojuegosVentas);
+    const colores = this.generarColores(cantidades.length);
+    const ctx = document.getElementById('VentaVideojuegos') as HTMLCanvasElement;
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: videojuegos,
+        datasets: [
+          {
+            label: 'Ventas por Videojuego',
+            data: cantidades,
+            backgroundColor: colores,
+            borderColor: colores,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          datalabels: {
+            display: true,
+          },
+        },
+      },
+    });
+  }
+
+  graficoVideojuegosRecaudacion() {
+    const videojuegos = Object.keys(this.videojuegosRecaudacion);
+    const recaudaciones = Object.values(this.videojuegosRecaudacion);
+    const colores = this.generarColores(recaudaciones.length);
+    const ctx = document.getElementById('RecaudacionVideojuegos') as HTMLCanvasElement;
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: videojuegos,
+        datasets: [
+          {
+            label: 'Recaudación por Videojuego',
+            data: recaudaciones,
+            backgroundColor: colores,
+            borderColor: colores,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          datalabels: {
+            display: true,
+            formatter: (value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+          },
+        },
+      },
+    });
+  }
+  
+  graficoGeneroVentas() {
+    const generos = Object.keys(this.generosVentas);
+    const cantidades = Object.values(this.generosVentas);
+    const colores = this.generarColores(cantidades.length);
+    const ctx = document.getElementById('VentaGeneros') as HTMLCanvasElement;
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: generos,
+        datasets: [
+          {
+            label: 'Ventas por Género',
+            data: cantidades,
+            backgroundColor: colores,
+            borderColor: colores,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          datalabels: {
+            formatter: (value, ctx) => {
+              const total = ctx.chart.data.datasets[0].data.reduce((a:any, b) => a + b, 0);
+              const porcentaje = ((value * 100) / total).toFixed(2) + '%';
+              return porcentaje;
+            },
+            color: 'black',
+          },
+        },
+      },
+    });
+  }
+  
+  graficoGeneroRecaudacion() {
+    const generos = Object.keys(this.generosRecaudacion);
+    const recaudaciones = Object.values(this.generosRecaudacion);
+    const colores = this.generarColores(recaudaciones.length);
+    const ctx = document.getElementById('RecaudacionGeneros') as HTMLCanvasElement;
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: generos,
+        datasets: [
+          {
+            label: 'Recaudación por Género',
+            data: recaudaciones,
+            backgroundColor: colores,
+            borderColor: colores,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          datalabels: {
+            formatter: (value, ctx) => {
+              const total = ctx.chart.data.datasets[0].data.reduce((a:any, b) => a + b, 0);
+              const porcentaje = ((value * 100) / total).toFixed(2) + '%';
+              return porcentaje;
+            },
+            color: 'black',
+          },
+        },
+      },
+    });
+  }
+  
+  graficoPlataformasVentas() {
+    const plataformas = Object.keys(this.plataformasVentas);
+    const cantidades = Object.values(this.plataformasVentas);
+    const colores = this.generarColores(cantidades.length);
+    const ctx = document.getElementById('VentaPlataformas') as HTMLCanvasElement;
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: plataformas,
+        datasets: [
+          {
+            label: 'Ventas por Plataforma',
+            data: cantidades,
+            backgroundColor: colores,
+            borderColor: colores,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          datalabels: {
+            display: true,
+          },
+        },
+      },
+    });
+  }
+  
+  graficoPlataformasRecaudacion() {
+    const plataformas = Object.keys(this.plataformasRecaudacion);
+    const recaudaciones = Object.values(this.plataformasRecaudacion);
+    const colores = this.generarColores(recaudaciones.length);
+    const ctx = document.getElementById('RecaudacionPlataformas') as HTMLCanvasElement;
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: plataformas,
+        datasets: [
+          {
+            label: 'Recaudación por Plataforma',
+            data: recaudaciones,
+            backgroundColor: colores,
+            borderColor: colores,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          datalabels: {
+            display: true,
+            formatter: (value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+          },
+        },
+      },
+    });
+  }
+  
+  graficoProveedoresVentas() {
+    const proveedores = Object.keys(this.proveedoresVentas);
+    const cantidades = Object.values(this.proveedoresVentas);
+    const colores = this.generarColores(cantidades.length);
+    const ctx = document.getElementById('CantidadProveedor') as HTMLCanvasElement;
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: proveedores,
+        datasets: [
+          {
+            label: 'Ventas por Proveedor',
+            data: cantidades,
+            backgroundColor: colores,
+            borderColor: colores,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          datalabels: {
+            display: true,
+          },
+        },
+      },
+    });
+  }
+  
+  graficoProveedoresRecaudacion() {
+    const proveedores = Object.keys(this.proveedoresRecaudacion);
+    const recaudaciones = Object.values(this.proveedoresRecaudacion);
+    const colores = this.generarColores(recaudaciones.length);
+    const ctx = document.getElementById('RecaudacionProveedor') as HTMLCanvasElement;
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: proveedores,
+        datasets: [
+          {
+            label: 'Recaudación por Proveedor',
+            data: recaudaciones,
+            backgroundColor: colores,
+            borderColor: colores,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          datalabels: {
+            display: true,
+            formatter: (value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+          },
+        },
+      },
+    });
+  }
+  
+  graficoCantidadVentasFormato() {
+    const formatos = Object.keys(this.cantidadVentasFormato);
+    const cantidades = Object.values(this.cantidadVentasFormato);
+    const colores = this.generarColores(cantidades.length);
+    const ctx = document.getElementById('CantidadVentasFormato') as HTMLCanvasElement;
+    new Chart(ctx, {
+      type: 'pie', // Cambiado a gráfico de pastel
+      data: {
+        labels: formatos,
+        datasets: [
+          {
+            label: 'Ventas por Formato',
+            data: cantidades,
+            backgroundColor: colores,
+            borderColor: colores,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          datalabels: {
+            formatter: (value, ctx) => {
+              const total = ctx.chart.data.datasets[0].data.reduce((a:any, b) => a + b, 0);
+              const porcentaje = ((value * 100) / total).toFixed(2) + '%';
+              return porcentaje;
+            },
+            color: 'black',
+          },
+        },
+      },
+    });
+  }
+  
+  graficoRecaudacionFormato() {
+    const formatos = Object.keys(this.recaudacionFormato);
+    const recaudaciones = Object.values(this.recaudacionFormato);
+    const colores = this.generarColores(recaudaciones.length);
+    const ctx = document.getElementById('RecaudacionFormato') as HTMLCanvasElement;
+    new Chart(ctx, {
+      type: 'pie', // Cambiado a gráfico de pastel
+      data: {
+        labels: formatos,
+        datasets: [
+          {
+            label: 'Recaudación por Formato',
+            data: recaudaciones,
+            backgroundColor: colores,
+            borderColor: colores,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          datalabels: {
+            formatter: (value, ctx) => {
+              const total = ctx.chart.data.datasets[0].data.reduce((a:any, b) => a + b, 0);
+              const porcentaje = ((value * 100) / total).toFixed(2) + '%';
+              return porcentaje;
+            },
+            color: 'black',
+          },
+        },
+      },
+    });
+  }
+
+
+
+
+  
+  dibujarResumenEstadisticas() {
+    const canvas = document.getElementById('ResumenEstadisticas') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) return;
+
+    // Limpiar el canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Estilos
+    const backgroundColor = '#ffffff';
+    const textColor = '#333333';
+    const headerColor = '#095493';
+    const rowColor1 = '#f9f9f9';
+    const rowColor2 = '#ffffff';
+    const padding = 20;
+    const rowHeight = 40;
+    const fontSize = 16;
+
+    // Dibujar fondo
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Dibujar encabezado
+    ctx.fillStyle = headerColor;
+    ctx.fillRect(0, 0, canvas.width, rowHeight);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `bold ${fontSize}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Resumen General', canvas.width / 2, rowHeight / 1.5);
+
+    // Datos de la tabla
+    const datos = [
+      { label: 'Dinero Recaudado', value: `$${this.estadisticasGenerales.dineroRecaudado.toLocaleString('en-US', { minimumFractionDigits: 2 })}` },
+      { label: 'Usuarios Registrados', value: this.estadisticasGenerales.usuariosRegistrados },
+      { label: 'Cantidad de Ventas', value: this.estadisticasGenerales.cantidadVentas },
+      { label: 'Número de Empleados', value: this.estadisticasGenerales.numeroEmpleados },
+      { label: 'Videojuegos Disponibles', value: this.estadisticasGenerales.cantidadVideojuegos },
+      { label: 'Videojuegos Físicos', value: this.estadisticasGenerales.videojuegosFisico },
+      { label: 'Videojuegos Digitales', value: this.estadisticasGenerales.videojuegosDigital },
+      { label: 'Dinero Invertido', value: `$${this.estadisticasGenerales.dineroInvertido.toLocaleString('en-US', { minimumFractionDigits: 2 })}` },
+    ];
+
+    // Dibujar filas de la tabla
+    ctx.font = `${fontSize}px Arial`;
+    ctx.textAlign = 'left';
+
+    datos.forEach((item, index) => {
+      const y = rowHeight + index * rowHeight;
+
+      // Alternar colores de fila
+      ctx.fillStyle = index % 2 === 0 ? rowColor1 : rowColor2;
+      ctx.fillRect(0, y, canvas.width, rowHeight);
+
+      // Dibujar texto
+      ctx.fillStyle = textColor;
+      ctx.fillText(item.label, padding, y + rowHeight / 1.5);
+
+      ctx.fillStyle = headerColor;
+      ctx.textAlign = 'right';
+      ctx.fillText(item.value, canvas.width - padding, y + rowHeight / 1.5);
+      ctx.textAlign = 'left';
+    });
+
+    // Dibujar bordes
+    ctx.strokeStyle = '#dddddd';
+    ctx.beginPath();
+    ctx.moveTo(0, rowHeight);
+    ctx.lineTo(canvas.width, rowHeight);
+    datos.forEach((_, index) => {
+      const y = rowHeight + index * rowHeight;
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+    });
+    ctx.stroke();
+  }
+
+  
+  // Guardar como PDF
+  saveAsPDF() {
+    const pdf = new jsPDF('landscape', 'px', 'a4');
+    const canvas = document.querySelectorAll('canvas');
+    canvas.forEach((canva, index) => {
+      const img = canva.toDataURL('image/png');
+      pdf.addImage(img, 'PNG', 10, 10, 400, 400, `img${index}`, 'FAST');
+      if (index < canvas.length - 1) pdf.addPage();
+    });
+    pdf.save('Reporte.pdf');
+  }
 }
