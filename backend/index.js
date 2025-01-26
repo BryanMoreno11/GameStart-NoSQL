@@ -11,10 +11,17 @@ app.use(express.urlencoded({ extended: false }));
 
 // Rutas
 const productosRoutes = require("./Routes/productosRoutes");
+const clientesRoutes = require("./Routes/clientesRoutes");
+const usuariosRoutes = require('./routes/usuariosRoutes');
+const verifyRoutes = require('./routes/verifyRoutes');
 app.use("/api", productosRoutes);
+app.use("/api", clientesRoutes);
+app.use('/api', usuariosRoutes);
+app.use('/api', verifyRoutes);
+
 
 // Inicio del servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
