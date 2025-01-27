@@ -14,6 +14,8 @@ const productosRoutes = require("./Routes/productosRoutes");
 const plataformaRoutes = require("./Routes/plataformasRoutes");
 const ventaRoutes=  require("./Routes/ventaRoutes");
 const dashboardRoutes = require("./Routes/dashboardRoutes");
+const empleadosRoutes = require("./Routes/empleadosRoutes");
+app.use("/api", empleadosRoutes);
 app.use("/api", productosRoutes);
 app.use("/api", plataformaRoutes);
 app.use("/api", ventaRoutes);
