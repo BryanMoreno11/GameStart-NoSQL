@@ -17,14 +17,19 @@ const dashboardRoutes = require("./Routes/dashboardRoutes");
 const clientesRoutes = require("./Routes/clientesRoutes");
 const usuariosRoutes = require('./routes/usuariosRoutes');
 const verifyRoutes = require('./routes/verifyRoutes');
+const correoRoutes = require('./routes/correoRoutes');
+const empleadosRoutes = require('./Routes/empleadosRoutes');
+
 app.use("/api", productosRoutes);
 app.use("/api", plataformaRoutes);
 app.use("/api", ventaRoutes);
 app.use("/api", dashboardRoutes);
-
+app.use("/api", correoRoutes);
 app.use("/api", clientesRoutes);
 app.use('/api', usuariosRoutes);
 app.use('/api', verifyRoutes);
+app.use('/api', empleadosRoutes);
+
 
 
 // Inicio del servidor

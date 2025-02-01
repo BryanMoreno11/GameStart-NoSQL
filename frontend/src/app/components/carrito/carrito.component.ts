@@ -33,7 +33,7 @@ export class CarritoComponent {
     nombre: "Carlos",
     apellido: "Lopez",
     telefono: "0981234567",
-    correo: "carlos.lopez@example.com",
+    correo: "danielzambranodev@gmail.com",
     contrasenia: "hashed_password",
     secret: "secret",
     fecha_nacimiento: new Date("1995-05-10T00:00:00Z"),
@@ -109,6 +109,8 @@ export class CarritoComponent {
         let respuesta= await this.registrarCompra();
         let venta= await this.obtenerVenta(respuesta.ventaId);
         console.log("La venta es",venta);
+        this.vistaVenta = venta;
+        this.enviarCorreoCliente();
         this.carrito_service.efectuarCompra();
         this.mostrarMensaje('¡Compra efectuada con éxito!', 'En su correo podrá ver la factura', 'success');
         this.carrito = this.carrito_service.carrito;
@@ -160,5 +162,24 @@ export class CarritoComponent {
       return false;
     }
     return true;
+  }
+
+  enviarCorreoCliente(){
+    console.log("Enviando correo...");
+    let params = {
+      cedula: this.vistaVenta.cliente.cedula,
+      nombre: this.vistaVenta.cliente.nombre,
+      correo: this.vistaVenta.cliente.correo,
+      fecha_venta: this.vistaVenta.fecha_venta,
+      subtotal: this.vistaVenta.subtotal,
+      iva: this.vistaVenta.iva,
+      total_venta: this.vistaVenta.total,
+      productos: this.vistaVenta.productos,
+      id_venta: this.vistaVenta._id,
+      ciudad: 'Pasaje >> Machala',
+    }
+    this.httpclien.post('http://localhost:3000/api/correo/',params).subscribe(resp=>{
+    console.log(resp);
+    });
   }
 }
