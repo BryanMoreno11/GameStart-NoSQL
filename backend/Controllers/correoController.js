@@ -14,11 +14,9 @@ async function generatePdf(pdfDefinition) {
 
 async function enviarCorreoPrueba(req, res) {
     let body = req.body;
-    console.log(body);
     const total = body.productos.reduce((acc, item) => acc + parseFloat(item.PRECIO), 0);
     const fechaVenta = new Date(body.fecha_venta);
     const fechaFormateada = `${fechaVenta.getDate().toString().padStart(2, '0')}/${(fechaVenta.getMonth() + 1).toString().padStart(2, '0')}/${fechaVenta.getFullYear()}`;
-    console.log(total);
     let pdfDefinition = {
         content: [{
                 columns: [{
@@ -170,7 +168,7 @@ async function enviarCorreoPrueba(req, res) {
                 layout: 'noBorders',
                 table: {
                     headerRows: 1,
-                    widths: ['*', '*', 80, 80],
+                    widths: ['*', 80, 80],
                     body: [
                         [{
                                 text: 'Descripción',
@@ -190,62 +188,44 @@ async function enviarCorreoPrueba(req, res) {
                                 alignment: 'right',
                                 fillColor: '#eaf2f5',
                                 margin: [0, 5, 0, 5],
-                                textTransform: 'uppercase',
                             },
                         ],
-                        ...body.productos.map(item => [{
-                                text: item.nombre + ' (' + item.plataforma.nombre + ') ',
-                                margin: [0, 5, 0, 5],
-                                alignment: 'left',
-                            },
-                            {
-                                text: item.cantidad,
-                                margin: [0, 5, 0, 5],
-                                alignment: 'right',
-                            },
-                            {
-                                text: `$${item.precio}`,
-                                fillColor: '#f5f5f5',
-                                alignment: 'right',
-                                margin: [0, 5, 0, 5],
-                            }
-                        ]), [{
-                                text: 'SUB-TOTAL',
-                                fillCollor: '#eaf2f5',
-                                bold: true,
-                                alignment: 'right',
-                                margin: [0, 10, 0, 5],
-                                colSpan: 2
-                            },
-                            {},
-                            {
-                                text: `$${body.subtotal}`,
-                                fillCollor: '#eaf2f5',
-                                bold: true,
-                                alignment: 'right',
-                                margin: [0, 10, 0, 5],
-                            }
-                        ],
-                        [{
-                                text: 'IVA',
-                                fillCollor: '#eaf2f5',
-                                bold: true,
-                                alignment: 'right',
-                                margin: [0, 10, 0, 5],
-                                colSpan: 2
-                            },
-                            {},
-                            {
-                                text: `$${body.iva}`,
-                                fillCollor: '#eaf2f5',
-                                bold: true,
-                                alignment: 'right',
-                                margin: [0, 10, 0, 5],
-                            }
-                        ],
-                        [{
+                        ...body.productos.flatMap(item => {
+                            const esDigital = item.tipo.nombre === "Digital";
+                            const clavesDelProducto = esDigital ? item.claves_digitales || [] : [];
+
+                            return [
+                                [{
+                                        text: item.nombre + ' (' + item.plataforma.nombre + ') ',
+                                        margin: [0, 5, 0, 5],
+                                        alignment: 'left',
+                                    },
+                                    {
+                                        text: item.cantidad,
+                                        margin: [0, 5, 0, 5],
+                                        alignment: 'right',
+                                    },
+                                    {
+                                        text: `$${item.importe}`,
+                                        fillColor: '#f5f5f5',
+                                        alignment: 'right',
+                                        margin: [0, 5, 0, 5],
+                                    }
+                                ],
+                                ...(
+                                    esDigital ?
+                                    clavesDelProducto.slice(0, item.cantidad).map(clave => [{
+                                            text: clave,
+                                            margin: [10, 2, 0, 2],
+                                            colSpan: 3
+                                        },
+                                        {}, {}
+                                    ]) : []
+                                )
+                            ];
+                        }), [{
                                 text: 'TOTAL',
-                                fillCollor: '#eaf2f5',
+                                fillColor: '#eaf2f5',
                                 bold: true,
                                 alignment: 'right',
                                 margin: [0, 10, 0, 5],
@@ -254,12 +234,12 @@ async function enviarCorreoPrueba(req, res) {
                             {},
                             {
                                 text: `$${body.total_venta}`,
-                                fillCollor: '#eaf2f5',
+                                fillColor: '#eaf2f5',
                                 bold: true,
                                 alignment: 'right',
                                 margin: [0, 10, 0, 5],
-                            },
-                        ],
+                            }
+                        ]
                     ]
                 }
             }

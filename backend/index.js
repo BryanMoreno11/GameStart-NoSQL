@@ -15,10 +15,11 @@ const plataformaRoutes = require("./Routes/plataformasRoutes");
 const ventaRoutes = require("./Routes/ventaRoutes");
 const dashboardRoutes = require("./Routes/dashboardRoutes");
 const clientesRoutes = require("./Routes/clientesRoutes");
-const usuariosRoutes = require('./routes/usuariosRoutes');
+const usuariosRoutes = require('./Routes/usuariosRoutes');
 const verifyRoutes = require('./routes/verifyRoutes');
 const correoRoutes = require('./routes/correoRoutes');
-const empleadosRoutes = require('./Routes/empleadosRoutes');
+const pedidosRoutes = require('./Routes/pedidosRoutes');
+const proveedoresRoutes = require('./Routes/proveedoresRoutes');
 
 app.use("/api", productosRoutes);
 app.use("/api", plataformaRoutes);
@@ -28,7 +29,8 @@ app.use("/api", correoRoutes);
 app.use("/api", clientesRoutes);
 app.use('/api', usuariosRoutes);
 app.use('/api', verifyRoutes);
-app.use('/api', empleadosRoutes);
+app.use('/api', pedidosRoutes);
+app.use('/api', proveedoresRoutes);
 
 
 

@@ -13,17 +13,16 @@ export class PedidoService {
 
   constructor(private http: HttpClient) { }
 
-  getPedidos(): Observable<Pedido[]> {
-    return this.http.get<ApiPedido[]>(`${this.apiUrl}/pedidos`).pipe(
-      map((apiPedidos: ApiPedido[]) => apiPedidos.map((apiPedido: ApiPedido) => this.transformPedido(apiPedido)))
-    );
+  getPedidos(): Observable<ApiPedido[]> {
+    return this.http.get<ApiPedido[]>(`${this.apiUrl}/pedidos`);
   }
 
-  addPedido(pedido: Pedido): Observable<any> {
+  addPedido(pedido: ApiPedido): Observable<any> {
     return this.http.post(`${this.apiUrl}/pedidos`, pedido);
   }
 
-  updatePedido(id: number, pedido: Pedido): Observable<any> {
+
+  updatePedido(id: string, pedido: ApiPedido): Observable<any> {
     return this.http.put(`${this.apiUrl}/pedidos/${id}`, pedido);
   }
 
@@ -36,7 +35,7 @@ export class PedidoService {
   }
 
   getVideojuegosPlataformas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/videojuego-plataformas`).pipe(
+    return this.http.get<any[]>(`${this.apiUrl}/plataformas`).pipe(
       map(videojuegosPlataformas => {
         console.log('Datos de Videojuegos Plataformas:', videojuegosPlataformas); // Añadido para depuración
         return videojuegosPlataformas;
@@ -51,16 +50,21 @@ export class PedidoService {
 
   private transformPedido(apiPedido: ApiPedido): Pedido {
     return {
-      id_pedido: apiPedido.ID_PEDIDO,
-      id_proveedor: apiPedido.ID_PROVEEDOR,
-      id_videojuego_plataforma: apiPedido.ID_VIDEOJUEGO_PLATAFORMA,
-      id_sucursal: apiPedido.ID_SUCURSAL,
-      fecha_pedido: new Date(apiPedido.FECHA_PEDIDO),
-      precio_unitario: apiPedido.PRECIO_UNITARIO,
-      cantidad: apiPedido.CANTIDAD,
-      descuento: apiPedido.DESCUENTO,
-      total: apiPedido.TOTAL,
-      estado: apiPedido.ESTADO
+      id_pedido: apiPedido._id,  // Asegúrate de mapear el id correctamente
+      proveedor: {
+        id: apiPedido.proveedor._id,
+        nombre: apiPedido.proveedor.nombre
+      },
+      producto: {
+        id: apiPedido.producto._id,
+        nombre: apiPedido.producto.nombre,
+        plataforma: apiPedido.producto.plataforma.nombre  // Suponiendo que solo quieres el nombre de la plataforma
+      },
+      precio_unitario: apiPedido.precio_unitario,
+      cantidad: apiPedido.cantidad,
+      descuento: apiPedido.descuento,
+      total: apiPedido.total,
+      fecha_pedido: new Date(apiPedido.fecha_pedido)  // Transformar la fecha correctamente
     };
   }
 }

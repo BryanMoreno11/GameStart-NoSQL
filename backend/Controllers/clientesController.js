@@ -2,6 +2,9 @@ const { MongoClient, ObjectId } = require('mongodb');
 const client = require('../database');
 const { encrypt, compare } = require("../helpers/handleBcrypt");
 const { get } = require('mongoose');
+const jwt = require('jsonwebtoken');
+const SECRET_JWT_KEY = 'prueba';
+
 
 
 const dbName = 'gameStart';
@@ -51,19 +54,17 @@ const getClienteByNombre = async(req, res) => {
 
 //obtener cliente login
 const getClienteLogin = async(req, res) => {
+    console.log('Comenzando proceso de login');
     const { correo, contrasenia } = req.body;
     try {
         const db = client.db(dbName);
         const cliente = await db.collection(collectionName).findOne({ correo: correo });
         if (cliente) {
+            console.log('Cliente encontrado', cliente);
             const passwordMatch = await compare(contrasenia, cliente.passwordHash);
             if (passwordMatch) {
-                res.status(200).json({
-                    success: true,
-                    message: 'Login Exitoso',
-                    id: cliente._id,
-                    nombre: cliente.nombre
-                });
+                const accessToken = jwt.sign({ username: cliente._id }, SECRET_JWT_KEY, { expiresIn: '1h' });
+                res.status(200).json({ succes: true, message: 'Login exitoso', id_cliente: cliente._id, nombre: cliente.nombre, accessToken });
             } else {
                 res.status(401).json({ error: 'Correo o contrasenia incorrecto' });
             }
@@ -109,12 +110,24 @@ const createCliente = async(req, res) => {
     }
 };
 
+const getClienteByToken = async(req, res) => {
+    const token = req.headers.authorization;
+    try {
+        const decoded = jwt.verify(token, SECRET_JWT_KEY);
+        const cliente = await client.db(dbName).collection(collectionName).findOne({ _id: new ObjectId(decoded.username) });
+        res.json(cliente);
+    } catch (error) {
+        res.status(401).json({ error: 'Token no valido' });
+    }
+};
+
 module.exports = {
     getAllClientes,
     getClienteByNombre,
     getClienteById,
     getClienteLogin,
     createCliente,
-    verifyLogin
+    verifyLogin,
+    getClienteByToken
 
 }

@@ -1,5 +1,7 @@
 const { MongoClient, ObjectId } = require('mongodb');
 const { encrypt, compare } = require("../helpers/handleBcrypt");
+const jwt = require('jsonwebtoken');
+const SECRET_JWT_KEY = 'prueba';
 const speakeasy = require('speakeasy');
 const client = require('../database');
 const dbName = "gameStart";
@@ -43,8 +45,8 @@ async function getUsuarioNombre(req, res) {
 
 //login de usuario
 async function getUsuarioLogin(req, res) {
+    console.log(req.body);
     const { correo, contrasenia } = req.body;
-
     try {
         const db = client.db(dbName);
         const usuario = await db.collection(collectionName).findOne({ correo });
@@ -52,7 +54,8 @@ async function getUsuarioLogin(req, res) {
         if (usuario) {
             const passwordMatch = await compare(contrasenia, usuario.passwordHash);
             if (passwordMatch) {
-                res.status(200).json({ success: true, message: "Login exitoso" });
+                const accessToken = jwt.sign({ username: usuario._id }, SECRET_JWT_KEY, { expiresIn: '1h' });
+                res.status(200).json({ succes: true, message: 'Login exitoso', id_cliente: usuario._id, nombre: usuario.nombre, accessToken });
             } else {
                 res.status(401).json({ message: "Nombre de usuario o contraseña incorrecto" });
             }

@@ -22,8 +22,13 @@ export class ClientesService {
   }
   
   insertarCliente(cliente:Cliente):Observable<any>{
-    return this.http.post<Cliente>(`${this.API_URL}cliente`, cliente);
+    return this.http.post<Cliente>(`${this.API_URL}clientes`, cliente);
   }
+  
+  getClienteLoginToken(header: string): Observable<any> {
+    return this.http.get(`${this.API_URL}clientes/token`, { headers: { Authorization: header } });
+  }
+
 }
 
 export interface Cliente{
