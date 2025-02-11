@@ -29,7 +29,7 @@ export class LoginUserComponent {
             icon: 'success'
           })
         }
-        console.log(res);
+        localStorage.setItem('authToken', res.accessToken);
         this.router.navigate(['/token-verify'], { queryParams: { nombre: this.nombre } });
       },
       err => {

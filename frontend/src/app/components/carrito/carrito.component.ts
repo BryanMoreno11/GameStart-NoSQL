@@ -5,6 +5,7 @@ import {
  ICarrito,
  Cliente,
 } from '../../services/carrito.service';
+import { ClientesService } from '../../services/clientes.service';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
@@ -28,25 +29,44 @@ export class CarritoComponent {
   vistaVentaDetalle: any;
    //Cliente de ejemplo
    cliente:Cliente= {
-    _id: "6766bc27c14a02639c07a821",
-    cedula: "1234567890",
-    nombre: "Carlos",
-    apellido: "Lopez",
-    telefono: "0981234567",
-    correo: "carlos.lopez@example.com",
-    contrasenia: "hashed_password",
-    secret: "secret",
-    fecha_nacimiento: new Date("1995-05-10T00:00:00Z"),
-    fecha_registro: new Date("2024-06-21T12:00:00Z")
+    _id: "",
+    cedula: "",
+    nombre: "",
+    apellido: "",
+    telefono: "",
+    correo: "",
+    contrasenia: "",
+    secret: "",
+    fecha_nacimiento: new Date(),
+    fecha_registro: new Date()
   }
   //#region Métodos
   constructor(
     private carrito_service: CarritoService,
     private httpclien: HttpClient,
-    private router: Router
+    private router: Router,
+    private clientes_service: ClientesService,
   ) {
     this.productos = carrito_service.carrito.productos;
     this.carrito = carrito_service.carrito;
+  }
+
+  ngOnInit(){
+    this.getCliente();
+  }
+
+  getCliente(){
+    const token = localStorage.getItem('authToken');
+    console.log('El token que estamos enviando es: ', token);
+    if(token){
+      this.clientes_service.getClienteLoginToken(token).subscribe(
+        res => {
+          console.log('La respuesta que obtenemos es: ', res);
+          this.cliente=res;
+          console.log('El cliente obtenido desde el token es ', this.cliente);
+        }
+      )
+    }
   }
 
   actualizarCantidad(producto: IProducto, cantidad: number) {
@@ -102,20 +122,27 @@ export class CarritoComponent {
   }
 
   async realizarCompra() {
-    this.carrito.cliente=this.cliente;
-    const confirm = await this.confirmarCompra();
-    if (confirm) {
-      try {
-        let respuesta= await this.registrarCompra();
-        let venta= await this.obtenerVenta(respuesta.ventaId);
-        console.log("La venta es",venta);
-        this.carrito_service.efectuarCompra();
-        this.mostrarMensaje('¡Compra efectuada con éxito!', 'En su correo podrá ver la factura', 'success');
-        this.carrito = this.carrito_service.carrito;
-      } catch (error:any) {
-       this.mostrarMensaje('¡Error!', error.message, 'error');
+    if (this.cliente.correo !== "") {
+      this.carrito.cliente = this.cliente;
+      const confirm = await this.confirmarCompra();
+      if (confirm) {
+        try {
+          let respuesta = await this.registrarCompra();
+          let venta = await this.obtenerVenta(respuesta.ventaId);
+          console.log("La venta es", venta);
+          this.vistaVenta = venta;
+          this.enviarCorreoCliente();
+          this.carrito_service.efectuarCompra();
+          this.mostrarMensaje('¡Compra efectuada con éxito!', 'En su correo podrá ver la factura', 'success');
+          this.carrito = this.carrito_service.carrito;
+        } catch (error: any) {
+          this.mostrarMensaje('¡Error!', error.message, 'error');
+        }
       }
+    }else{
+      this.mostrarMensaje('¡Error!', 'Debes iniciar sesión para realizar la compra', 'error');
     }
+
   }
 
   async registrarCompra(){
@@ -160,5 +187,26 @@ export class CarritoComponent {
       return false;
     }
     return true;
+  }
+
+  enviarCorreoCliente(){
+    console.log("La vista es: ", this.vistaVenta);
+    console.log("Enviando correo...");
+    let params = {
+      cedula: this.vistaVenta.cliente.cedula,
+      nombre: this.vistaVenta.cliente.nombre,
+      correo: this.vistaVenta.cliente.correo,
+      fecha_venta: this.vistaVenta.fecha_venta,
+      subtotal: this.vistaVenta.subtotal,
+      iva: this.vistaVenta.iva,
+      total_venta: this.vistaVenta.total,
+      productos: this.vistaVenta.productos,
+      id_venta: this.vistaVenta._id,
+      ciudad: this.vistaVenta.cliente.id_ciudad,
+      claves_digitales: this.vistaVenta.clavesUsuario
+    }
+    this.httpclien.post('http://localhost:3000/api/correo/',params).subscribe(resp=>{
+    console.log(resp);
+    });
   }
 }

@@ -16,7 +16,7 @@ import Swal from 'sweetalert2';
 export class RegisterClientComponent {
 
    cliente: Cliente = {
-    id_ciudad: '',
+    id_ciudad: '1',
     cedula: '',
     nombre: '',
     apellido: '',
@@ -31,14 +31,14 @@ export class RegisterClientComponent {
 
   constructor(private http:HttpClient, private clientesServices:ClientesService, private router:Router) {}
 
-  ngOnInit(  ): void {
-    this.http.get<any>(`http://localhost:3000/api/ciudades`).subscribe(
-      res => {
-        this.ciudades = res;
-        console.log(this.ciudades);
-      }
-    );
-  }
+  //ngOnInit(  ): void {
+  //  this.http.get<any>(`http://localhost:3000/api/ciudades`).subscribe(
+  //   res => {
+  //      this.ciudades = res;
+  //      console.log(this.ciudades);
+  //   }
+  //  );
+  //}
 
 
   insertarCliente() {
@@ -51,7 +51,7 @@ export class RegisterClientComponent {
           text: 'El usuario ha sido registrado correctamente',
           icon: 'success'
         })
-        this.router.navigate(['/'],);
+        this.router.navigate(['/login-client'],);
       } else {
         Swal.fire({
           title: 'Error',
