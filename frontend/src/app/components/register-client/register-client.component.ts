@@ -51,7 +51,7 @@ export class RegisterClientComponent {
           text: 'El usuario ha sido registrado correctamente',
           icon: 'success'
         })
-        this.router.navigate(['/'],);
+        this.router.navigate(['/login-client'],);
       } else {
         Swal.fire({
           title: 'Error',
