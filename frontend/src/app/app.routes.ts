@@ -14,7 +14,7 @@ import AdminPedidosComponent from './bussines/admin-pedidos/admin-pedidos.compon
 import { LoginClientComponent } from './components/login-client/login-client.component';
 import { RegisterClientComponent } from './components/register-client/register-client.component';
 import { ReportesComponent } from './components/reportes/reportes.component';
-
+import { AuthGuard } from './guards/auth.guard';
 export const routes: Routes = [
   { path: 'inicio', component: InicioComponent },
   { path: 'videojuego/:id', component: VideojuegoDetalleComponent },
@@ -34,9 +34,9 @@ export const routes: Routes = [
     path: 'admin',
     component: LayoutComponent,
     children: [
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'empleados', component: AdminEmpleadosComponent },
-      { path: 'pedidos', component: AdminPedidosComponent },
+      { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+      { path: 'empleados', component: AdminEmpleadosComponent, canActivate: [AuthGuard]  },
+      { path: 'pedidos', component: AdminPedidosComponent, canActivate: [AuthGuard]  },
     ]
   },
   { path: '', pathMatch: 'full', redirectTo: 'inicio' },  // Redirecciona a 'inicio'
