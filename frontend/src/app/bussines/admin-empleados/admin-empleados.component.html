@@ -56,80 +56,90 @@
     </table>
 
   <!-- Modal para agregar/editar empleado -->
-  <div class="modal" [ngClass]="{'is-visible': isFormVisible}" (click)="onModalClick($event)">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <span class="close-button" (click)="closeModal()">×</span>
-      <h2>{{ isEditing ? 'Editar Empleado' : 'Agregar Empleado' }}</h2>
-      <form (ngSubmit)="saveEmpleado()" #empleadoForm="ngForm">
+<div class="modal" [ngClass]="{'is-visible': isFormVisible}" (click)="onModalClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <span class="close-button" (click)="closeModal()">×</span>
+    <h2>{{ isEditing ? 'Editar Empleado' : 'Agregar Empleado' }}</h2>
+    <form (ngSubmit)="saveEmpleado()" #empleadoForm="ngForm">
 
-        <div class="form-group">
-          <label for="cedula">Cédula</label>
-          <input id="cedula" name="cedula"
-                 [(ngModel)]="selectedEmpleado.cedula"
-                 placeholder="Cédula" required>
-        </div>
+      <div class="form-group">
+        <label for="cedula">Cédula</label>
+        <input id="cedula" name="cedula"
+               [(ngModel)]="selectedEmpleado.cedula"
+               placeholder="Cédula" required>
+      </div>
 
-        <div class="form-group">
-          <label for="nombre">Nombre</label>
-          <input id="nombre" name="nombre"
-                 [(ngModel)]="selectedEmpleado.nombre"
-                 placeholder="Nombre" required>
-        </div>
-        
-        <div class="form-group">
-          <label for="apellido">Apellido</label>
-          <input id="apellido" name="apellido"
-                 [(ngModel)]="selectedEmpleado.apellido"
-                 placeholder="Apellido" required>
-        </div>
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" name="nombre"
+               [(ngModel)]="selectedEmpleado.nombre"
+               placeholder="Nombre" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="apellido">Apellido</label>
+        <input id="apellido" name="apellido"
+               [(ngModel)]="selectedEmpleado.apellido"
+               placeholder="Apellido" required>
+      </div>
 
-        <div class="form-group">
-          <label for="fecha_nacimiento">Fecha de Nacimiento</label>
-          <input id="fecha_nacimiento" name="fecha_nacimiento"
-                 type="date"
-                 [(ngModel)]="selectedEmpleado.fecha_nacimiento"
-                 required>
-        </div>
+      <div class="form-group">
+        <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+        <input id="fecha_nacimiento" name="fecha_nacimiento"
+               type="date"
+               [(ngModel)]="selectedEmpleado.fecha_nacimiento"
+               required>
+      </div>
 
-        <div class="form-group">
-          <label for="direccion">Dirección</label>
-          <input id="direccion" name="direccion"
-                 [(ngModel)]="selectedEmpleado.direccion"
-                 placeholder="Dirección" required>
-        </div>
+      <div class="form-group">
+        <label for="direccion">Dirección</label>
+        <input id="direccion" name="direccion"
+               [(ngModel)]="selectedEmpleado.direccion"
+               placeholder="Dirección" required>
+      </div>
 
-        <div class="form-group">
-          <label for="telefono">Teléfono</label>
-          <input id="telefono" name="telefono"
-                 [(ngModel)]="selectedEmpleado.telefono"
-                 placeholder="Teléfono" required>
-        </div>
+      <div class="form-group">
+        <label for="telefono">Teléfono</label>
+        <input id="telefono" name="telefono"
+               [(ngModel)]="selectedEmpleado.telefono"
+               placeholder="Teléfono" required>
+      </div>
 
-        <div class="form-group">
-          <label for="correo">Correo</label>
-          <input id="correo" name="correo"
-                 type="email"
-                 [(ngModel)]="selectedEmpleado.correo"
-                 placeholder="Correo" required>
-        </div>
+      <div class="form-group">
+        <label for="correo">Correo</label>
+        <input id="correo" name="correo"
+               type="email"
+               [(ngModel)]="selectedEmpleado.correo"
+               placeholder="Correo" required>
+      </div>
 
-        <div class="form-group">
-          <label for="puesto">Puesto</label>
-          <input id="puesto" name="puesto"
-                 [(ngModel)]="selectedEmpleado.puesto.nombre"
-                 placeholder="Puesto" required>
-        </div>
+      <div class="form-group">
+        <label for="puesto">Puesto</label>
+        <input id="puesto" name="puesto"
+               [(ngModel)]="selectedEmpleado.puesto.nombre"
+               placeholder="Puesto" required>
+      </div>
 
-        <div class="form-group">
-          <label for="sueldo">Sueldo</label>
-          <input id="sueldo" name="sueldo"
-                 type="number"
-                 [(ngModel)]="selectedEmpleado.sueldo"
-                 placeholder="Sueldo" required>
-        </div>
+      <div class="form-group">
+        <label for="sueldo">Sueldo</label>
+        <input id="sueldo" name="sueldo"
+               type="number"
+               [(ngModel)]="selectedEmpleado.sueldo"
+               placeholder="Sueldo" required>
+      </div>
+      
+      <!-- Nuevo combobox para el Estado -->
+      <div class="form-group">
+        <label for="estado">Estado</label>
+        <select id="estado" name="estado"
+                [(ngModel)]="selectedEmpleado.estado"
+                required>
+          <option value="activo">Activo</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+      </div>
 
-        <button type="submit">{{ isEditing ? 'Actualizar' : 'Agregar' }}</button>
-      </form>
-    </div>
+      <button type="submit">{{ isEditing ? 'Actualizar' : 'Agregar' }}</button>
+    </form>
   </div>
 </div>

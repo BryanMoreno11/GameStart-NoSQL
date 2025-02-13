@@ -201,6 +201,17 @@ form button:hover {
   color: #000;
 }
 
+form input,
+form select,
+form textarea {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
 /* Responsive */
 @media (max-width: 600px) {
   .admin-empleados table th,
