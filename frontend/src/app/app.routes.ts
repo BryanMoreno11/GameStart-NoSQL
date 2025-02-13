@@ -11,34 +11,36 @@ import LayoutComponent from './shared/components/layout/layout.component';
 import { DashboardComponent } from './bussines/dashboard/dashboard.component';
 import AdminEmpleadosComponent from './bussines/admin-empleados/admin-empleados.component';
 import AdminPedidosComponent from './bussines/admin-pedidos/admin-pedidos.component';
+import AdminProductosComponent from './bussines/admin-productos/admin-productos.component'; // <-- Nueva importación
 import { LoginClientComponent } from './components/login-client/login-client.component';
 import { RegisterClientComponent } from './components/register-client/register-client.component';
 import { ReportesComponent } from './components/reportes/reportes.component';
 import { AuthGuard } from './guards/auth.guard';
+
 export const routes: Routes = [
   { path: 'inicio', component: InicioComponent },
   { path: 'videojuego/:id', component: VideojuegoDetalleComponent },
-    {path: 'login', component: LoginUserComponent},
-    {path: 'register', component: RegisterUserComponent},
-    {path: 'token-verify', component: VerificacionTokenComponent},
-    {path: 'qr-verify',component: AuthenticateQrComponent},
-    { path: 'videojuegos', component: VideojuegosComponent },
-    { path: 'carrito', component: CarritoComponent },
-    {path:'reportes', component:ReportesComponent},
-    { path: 'login-client', component: LoginClientComponent },
-    { path: 'register-client', component: RegisterClientComponent },
-    { path: 'reportes', component: ReportesComponent },
-
+  { path: 'login', component: LoginUserComponent },
+  { path: 'register', component: RegisterUserComponent },
+  { path: 'token-verify', component: VerificacionTokenComponent },
+  { path: 'qr-verify', component: AuthenticateQrComponent },
+  { path: 'videojuegos', component: VideojuegosComponent },
+  { path: 'carrito', component: CarritoComponent },
+  { path: 'reportes', component: ReportesComponent },
+  { path: 'login-client', component: LoginClientComponent },
+  { path: 'register-client', component: RegisterClientComponent },
+  { path: 'reportes', component: ReportesComponent },
 
   {
     path: 'admin',
     component: LayoutComponent,
     children: [
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-      { path: 'empleados', component: AdminEmpleadosComponent, canActivate: [AuthGuard]  },
-      { path: 'pedidos', component: AdminPedidosComponent, canActivate: [AuthGuard]  },
+      { path: 'empleados', component: AdminEmpleadosComponent, canActivate: [AuthGuard] },
+      { path: 'pedidos', component: AdminPedidosComponent, canActivate: [AuthGuard] },
+      { path: 'productos', component: AdminProductosComponent, canActivate: [AuthGuard] } // <-- Nueva ruta para productos
     ]
   },
-  { path: '', pathMatch: 'full', redirectTo: 'inicio' },  // Redirecciona a 'inicio'
-  { path: '**', pathMatch: 'full', redirectTo: 'inicio' }  // Captura rutas no definidas y redirige a 'inicio'
+  { path: '', pathMatch: 'full', redirectTo: 'inicio' },
+  { path: '**', pathMatch: 'full', redirectTo: 'inicio' }
 ];

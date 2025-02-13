@@ -239,6 +239,7 @@ export interface ICarrito {
   iva: number;
   total: number;
   cantidad: number;
+  fecha_venta?: string;
 }
 
 export interface VentaResponse {

@@ -1,0 +1,142 @@
+<div class="admin-productos">
+    <div class="title-container">
+      <h2>Lista de Productos</h2>
+      <button (click)="showInsertForm()" class="insert-button">
+        Insertar Nuevo Producto
+      </button>
+    </div>
+    
+    <!-- Filtro sin botón -->
+    <div class="filter-container">
+      <div class="filter-inner">
+        <input type="text" placeholder="Buscar por nombre..." [(ngModel)]="searchName" (ngModelChange)="applyFilter()" name="searchName">
+        <select [(ngModel)]="filterType" (ngModelChange)="applyFilter()" name="filterType">
+          <option value="">Todos los tipos</option>
+          <option value="digital">Digital</option>
+          <option value="físico">Físico</option>
+        </select>
+        <select [(ngModel)]="filterPlatform" (ngModelChange)="applyFilter()" name="filterPlatform">
+          <option value="">Todas las plataformas</option>
+          <option *ngFor="let plat of plataformas" [value]="plat.nombre">{{ plat.nombre }}</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- Contenedor de tabla responsive -->
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Imagen</th>
+            <th>Nombre</th>
+            <th>Desarrolladora</th>
+            <th>Plataforma</th>
+            <th>Género</th>
+            <th>Tipo</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Fecha de Creación</th>
+            <th>Descripción</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let producto of filteredProductos">
+            <td>
+              <img *ngIf="producto.imagenes && producto.imagenes.length"
+                   [src]="producto.imagenes[0]"
+                   alt="Imagen de {{ producto.nombre }}"
+                   class="product-img">
+            </td>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.desarrolladora }}</td>
+            <td>{{ producto.plataforma.nombre }}</td>
+            <!-- Se muestra el nombre y la descripción del género -->
+            <td>{{ producto.genero.nombre }} - {{ producto.genero.descripcion }}</td>
+            <td>{{ producto.tipo.nombre }}</td>
+            <td>{{ producto.precio }}</td>
+            <td>{{ producto.stock }}</td>
+            <td>{{ producto.fecha_creacion | date:'shortDate' }}</td>
+            <td>{{ producto.descripcion }}</td>
+            <td>
+              <div class="btn-container">
+                <button class="edit" (click)="editProducto(producto)">Editar</button>
+              </div>
+              <div class="btn-container" *ngIf="(producto.tipo.nombre || '').toLowerCase() === 'digital'">
+                <button class="view-keys" (click)="viewKeys(producto)">Ver Claves</button>
+              </div>
+              <div class="btn-container">
+                <button class="stock" (click)="changeStock(producto)">Cambiar Stock</button>
+              </div>
+              <div class="btn-container">
+                <button class="delete" (click)="deleteProducto(producto._id)">Borrar</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Modal para agregar/editar producto -->
+    <div class="modal" [ngClass]="{'is-visible': isFormVisible}" (click)="onModalClick($event)">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <span class="close-button" (click)="closeModal()">&times;</span>
+        <h2>{{ isEditing ? 'Editar Producto' : 'Agregar Producto' }}</h2>
+        <form (ngSubmit)="saveProducto()" #productoForm="ngForm">
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" name="nombre" [(ngModel)]="selectedProducto.nombre" placeholder="Nombre" required>
+          </div>
+          <div class="form-group">
+            <label for="desarrolladora">Desarrolladora</label>
+            <input id="desarrolladora" name="desarrolladora" [(ngModel)]="selectedProducto.desarrolladora" placeholder="Desarrolladora" required>
+          </div>
+          <div class="form-group">
+            <label for="precio">Precio</label>
+            <input id="precio" name="precio" type="number" [(ngModel)]="selectedProducto.precio" placeholder="Precio" required>
+          </div>
+          <div class="form-group">
+            <label for="plataforma">Plataforma</label>
+            <select id="plataforma" name="plataforma" [(ngModel)]="selectedProducto.plataforma" required>
+              <option *ngFor="let plat of plataformas" [ngValue]="plat">{{ plat.nombre }}</option>
+            </select>
+          </div>
+          <!-- Separamos el género en dos campos -->
+          <div class="form-group">
+            <label for="generoNombre">Nombre del Género</label>
+            <input id="generoNombre" name="generoNombre" [(ngModel)]="selectedProducto.genero.nombre" placeholder="Ej: RPG" required>
+          </div>
+          <div class="form-group">
+            <label for="generoDescripcion">Descripción del Género</label>
+            <textarea id="generoDescripcion" name="generoDescripcion" [(ngModel)]="selectedProducto.genero.descripcion"
+              placeholder="Role-playing game, con aventuras y misiones." required class="large-text"></textarea>
+          </div>
+          <!-- Sólo en creación -->
+          <div class="form-group" *ngIf="!isEditing">
+            <label for="tipo">Tipo</label>
+            <select id="tipo" name="tipo" [(ngModel)]="selectedProducto.tipo" required>
+              <option [ngValue]="{nombre: 'digital', descripcion: '', fecha_creacion: ''}">Digital</option>
+              <option [ngValue]="{nombre: 'fisico', descripcion: '', fecha_creacion: ''}">Físico</option>
+            </select>
+          </div>
+          <div class="form-group" *ngIf="!isEditing">
+            <label for="stock">Stock</label>
+            <input id="stock" name="stock" type="number" [(ngModel)]="selectedProducto.stock" placeholder="Stock" required>
+          </div>
+          <div class="form-group">
+            <label for="imagenes">URL de imagen</label>
+            <input id="imagenes" name="imagenes" [(ngModel)]="selectedProducto.imagenes" placeholder="URL de imagen" required>
+          </div>
+          <div class="form-group">
+            <label for="fecha_creacion">Fecha de Creación</label>
+            <input id="fecha_creacion" type="date" name="fecha_creacion" [(ngModel)]="selectedProducto.fecha_creacion" placeholder="Fecha de Creación" required>
+          </div>
+          <div class="form-group">
+            <label for="descripcion">Descripción del Producto</label>
+            <textarea id="descripcion" name="descripcion" [(ngModel)]="selectedProducto.descripcion" placeholder="Descripción detallada del producto" required class="large-text"></textarea>
+          </div>
+          <button type="submit">{{ isEditing ? 'Actualizar' : 'Agregar' }}</button>
+        </form>
+      </div>
+    </div>
+</div>

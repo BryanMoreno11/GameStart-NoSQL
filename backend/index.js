@@ -20,7 +20,8 @@ const verifyRoutes = require('./routes/verifyRoutes');
 const correoRoutes = require('./routes/correoRoutes');
 const pedidosRoutes = require('./Routes/pedidosRoutes');
 const proveedoresRoutes = require('./Routes/proveedoresRoutes');
-
+const empleadosRoutes = require("./Routes/empleadosRoutes");
+app.use("/api", empleadosRoutes);
 app.use("/api", productosRoutes);
 app.use("/api", plataformaRoutes);
 app.use("/api", ventaRoutes);

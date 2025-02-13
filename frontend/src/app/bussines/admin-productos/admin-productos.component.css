@@ -1,0 +1,321 @@
+/* General */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.admin-productos {
+    padding: 20px;
+}
+
+/* Contenedor para el título y el botón */
+.title-container {
+    width: 600px;
+    max-width: 100%;
+    margin: 0 auto 20px auto;
+    text-align: center;
+}
+
+.title-container h2 {
+    margin-bottom: 10px;
+}
+
+/* Botón Insertar reposicionado y adaptado */
+.insert-button {
+    width: 100%;
+    padding: 8px 0;
+    background-color: #16171a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    white-space: nowrap;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.insert-button:hover {
+    background-color: #14429f;
+    transform: scale(1.02);
+}
+
+/* Filtro: sin wrap vertical, con scroll horizontal si es necesario */
+/* Contenedor para el filtro */
+.filter-container {
+    overflow-x: auto;
+    padding: 0 10px;
+    margin-bottom: 20px;
+}
+
+/* Contenedor interno que abraza los elementos del filtro y se centra cuando su ancho es el necesario */
+.filter-inner {
+    display: flex;
+    gap: 10px;
+    width: max-content;
+    margin: 0 auto;
+}
+
+/* Opcional: asegurar que los inputs y select no sean demasiado pequeños */
+.filter-container input,
+.filter-container select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex: 0 0 auto;
+    max-width: 175px;
+}
+
+/* Contenedor responsive para la tabla */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table th,
+table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+}
+
+table th {
+    background-color: #16171a;
+    color: #fff;
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table tr:hover {
+    background-color: #ddd;
+}
+
+/* Centrar contenido en celdas */
+.admin-productos table td {
+    text-align: center;
+}
+
+/* Para la columna de Descripción, asignar mayor ancho */
+.admin-productos table td:nth-child(10) {
+    text-align: justify;
+    min-width: 250px; /* Ajusta este valor según convenga */
+}
+
+/* Botones de la tabla: se usan contenedores para separación vertical */
+.btn-container {
+    margin-bottom: 5px;
+}
+
+.admin-productos table td button {
+    width: 120px;
+    background-color: #16171a;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    margin: 0 auto;
+    display: block;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.admin-productos table td button:hover {
+    background-color: #14429f;
+    transform: scale(1.05);
+}
+
+/* Formularios del modal */
+/* Agrupar elementos con títulos */
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+form input,
+form select,
+form textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+form > * {
+    flex: 1 1 45%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+form button {
+    width: 120px;
+    flex: 1 1 100%;
+    margin: 10px auto 0 auto;
+    background-color: #16171a;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+form button:hover {
+    background-color: #14429f;
+    transform: scale(1.05);
+}
+
+/* Estilo para textareas de mayor tamaño */
+textarea.large-text {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.4);
+    transition: opacity 0.3s ease;
+}
+
+.modal.is-visible {
+    display: block;
+}
+
+
+/* Modal Content con scroll interno */
+.modal-content {
+    background-color: #fff;
+    /* Baja el margen superior para que el modal se vea más arriba */
+    margin: 5% auto; 
+    margin-top: 25%;
+    padding: 20px;
+    border: 1px solid #888;
+    
+    /* Haz el ancho más estrecho y limita la altura para que se vea parte de atrás */
+    width: 75%;
+    max-width: 500px;      /* ancho máximo en escritorio */
+    max-height: 70vh;      /* menor altura máxima para que se alcance a ver el fondo */
+    
+    overflow-y: auto;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+/* Close button */
+.close-button {
+    color: #aaa;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    color: #000;
+}
+
+/* Tabla de claves en modal (SweetAlert2) */
+.keys-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.keys-table th,
+.keys-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.keys-table th {
+    background-color: #16171a;
+    color: #fff;
+}
+
+.admin-productos table td img.product-img {
+    width: 100px;        /* O el ancho deseado */
+    height: 70px;        /* Una altura fija para efecto rectangular */
+    object-fit: cover;   /* Para recortar la imagen manteniendo la proporción */
+    border-radius: 4px;  /* Opcional, para un pequeño redondeo */
+}
+
+/* Media Queries para dispositivos móviles */
+@media (max-width: 768px) {
+    .admin-productos table td img.product-img {
+        width: 80px;
+        height: 56px;
+    }
+    
+    .title-container {
+        width: 90%;
+    }
+  
+    /* Se mantiene la disposición horizontal de filtros sin que se rompa la línea */
+    .filter-container {
+        gap: 5px;
+    }
+  
+    form > * {
+        flex: 1 1 100%;
+    }
+
+    .close-button {
+        font-size: 28px;
+    }
+
+    .modal-content {
+        height: 75%;
+    }
+
+}
+
+@media (max-height: 545px) {
+    .modal-content {
+        margin-top: 8%;
+    }
+
+}
+
+@media (min-width: 820px) {
+    .modal-content {
+        margin: 5% auto; 
+        margin-top: 8%;
+
+    }
+
+}

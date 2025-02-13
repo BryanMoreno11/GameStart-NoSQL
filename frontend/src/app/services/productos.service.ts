@@ -6,23 +6,40 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ProductosService {
-  //region atributos
-  private urlBase='http://localhost:3000/api/';
+  // URL base del API
+  private urlBase = 'http://localhost:3000/api/';
 
-  //region métodos
-  constructor(private _httpClient: HttpClient) { 
+  constructor(private http: HttpClient) { }
 
+  // Obtiene todos los productos
+  getProductos(): Observable<Producto[]> {
+    return this.http.get<Producto[]>(`${this.urlBase}productos`);
   }
 
-  getProductos():Observable<Producto[]>{
-    return this._httpClient.get<Producto[]>(this.urlBase+'productos');
+  // Obtiene un producto por ID
+  getProducto(id: number | string): Observable<Producto> {
+    return this.http.get<Producto>(`${this.urlBase}productos/${id}`);
   }
 
-  getProducto(id:number | string):Observable<Producto>{
-    return this._httpClient.get<Producto>(this.urlBase+`productos/${id}`);
+  // Crea un nuevo producto
+  createProducto(producto: Producto): Observable<any> {
+    return this.http.post(`${this.urlBase}productos`, producto);
   }
 
+  // Actualiza un producto (general)
+  updateProducto(id: number | string, producto: Producto): Observable<any> {
+    return this.http.put(`${this.urlBase}productos/${id}`, producto);
+  }
 
+  // Actualiza el stock y ajusta las claves digitales (ruta: /productos/:id/stock)
+  updateStockProducto(id: number | string, newStock: number): Observable<any> {
+    return this.http.put(`${this.urlBase}productos/${id}/stock`, { newStock });
+  }
+
+  // Elimina un producto
+  deleteProducto(id: number | string): Observable<any> {
+    return this.http.delete(`${this.urlBase}productos/${id}`);
+  }
 }
 
 export interface Plataforma {
@@ -55,8 +72,7 @@ export interface Producto {
   imagenes: string[]; 
   fecha_creacion: string | Date; 
   descripcion: string;
-  claves_digitales: string[] | null; 
+  // Para productos digitales, en el backend se almacenan como objetos con { codigo, usada }.
+  // Puedes ajustar el tipo según corresponda.
+  claves_digitales?: any[] | null; 
 }
-
-
-

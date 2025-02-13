@@ -124,6 +124,9 @@ export class CarritoComponent {
   async realizarCompra() {
     if (this.cliente.correo !== "") {
       this.carrito.cliente = this.cliente;
+      // Asignar la fecha actual a la venta en formato ISO
+      this.carrito.fecha_venta = new Date().toISOString();
+  
       const confirm = await this.confirmarCompra();
       if (confirm) {
         try {
@@ -139,11 +142,11 @@ export class CarritoComponent {
           this.mostrarMensaje('¡Error!', error.message, 'error');
         }
       }
-    }else{
+    } else {
       this.mostrarMensaje('¡Error!', 'Debes iniciar sesión para realizar la compra', 'error');
     }
-
   }
+  
 
   async registrarCompra(){
    return await firstValueFrom (this.carrito_service.saveVenta(this.carrito));
