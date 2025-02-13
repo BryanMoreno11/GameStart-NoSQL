@@ -15,15 +15,16 @@ import { Router } from '@angular/router';
 export default class LayoutComponent implements OnInit, OnDestroy {
   isSidebarOpen = false;
 
-  constructor(private layoutService: LayoutService, private router:Router) { }
+  constructor(private layoutService: LayoutService, private router: Router) { }
 
   ngOnInit() {
-   //this.activarmodoAdmin();
+    this.layoutService.setLayout(false); // Ocultar navbar y footer en este layout
   }
 
   ngOnDestroy() {
-    this.layoutService.setLayout(true);
+    this.layoutService.setLayout(true); // Restaurar navbar y footer cuando se salga
   }
+
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
