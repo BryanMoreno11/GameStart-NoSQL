@@ -1,98 +1,53 @@
-import { Component, OnInit,ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { EmpleadoService } from '../../services/empleado.service';
-import { Empleado } from '../../models/empleado';
+import { Empleado, Puesto } from '../../models/empleado';
+import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-admin-empleados',
   standalone: true,
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './admin-empleados.component.html',
-  styleUrl: './admin-empleados.component.css'
+  styleUrls: ['./admin-empleados.component.css']
 })
 export default class AdminEmpleadosComponent implements OnInit {
   empleados: Empleado[] = [];
-  sucursales: any[] = [];
-  ciudades: any[] = [];
-  puestos: any[] = [];
+  filteredEmpleados: Empleado[] = [];
+  
+  // Filtro por búsqueda (por nombre, apellido o cédula)
+  searchTerm: string = '';
+
+  // Para formulario (crear/editar)
   selectedEmpleado: Empleado = this.initializeEmpleado();
   isFormVisible: boolean = false;
   isEditing: boolean = false;
 
-  constructor(private empleadoService: EmpleadoService, private cdr: ChangeDetectorRef) { }
+  constructor(
+    private empleadoService: EmpleadoService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
     this.getEmpleados();
-    this.getSucursales();
-    this.getCiudades();
-    this.getPuestos();
   }
 
   getEmpleados(): void {
-    this.empleadoService.getEmpleados().subscribe(empleados => {
-      this.empleados = empleados;
-      this.empleados.map(empleado=>{
-        let ob = Object.assign(empleado)
-        let fecha = new Date(empleado.fecha_nacimiento);
-        fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset());
-        ob.fecha_nacimiento = fecha
-        return ob;
-      })
-      console.log("Los  empleados que se obtienen son", empleados)
-    });
-  }
-
-  getSucursales(): void {
-    this.empleadoService.getSucursales().subscribe(sucursales => {
-      this.sucursales = sucursales;
+    this.empleadoService.getEmpleados().subscribe(emps => {
+      this.empleados = emps;
+      this.filteredEmpleados = emps;
       this.cdr.detectChanges();
     });
   }
 
-  getCiudades(): void {
-    this.empleadoService.getCiudades().subscribe(ciudades => {
-      this.ciudades = ciudades;
-      this.cdr.detectChanges();
-    });
-  }
-
-  getPuestos(): void {
-    this.empleadoService.getPuestos().subscribe(puestos => {
-      this.puestos = puestos;
-      this.cdr.detectChanges();
-    });
-  }
-
-  saveEmpleado(): void {
-    if (this.isEditing && this.selectedEmpleado.id_empleado) {
-      this.empleadoService.updateEmpleado(this.selectedEmpleado.id_empleado, this.selectedEmpleado).subscribe(() => {
-        this.getEmpleados();
-        this.isFormVisible = false;
-        this.selectedEmpleado = this.initializeEmpleado();
-      });
-    } else {
-      this.empleadoService.addEmpleado(this.selectedEmpleado).subscribe(() => {
-        this.getEmpleados();
-        this.isFormVisible = false;
-        this.selectedEmpleado = this.initializeEmpleado();
-      });
-    }
-  }
-
-  editEmpleado(empleado: Empleado): void {
-    this.selectedEmpleado = { ...empleado };
-    this.isFormVisible = true;
-    this.isEditing = true;
-    this.selectedEmpleado.fecha_nacimiento = this.formatearFecha(this.selectedEmpleado.fecha_nacimiento);
-  }
-  
-  formatearFecha(fecha:any):string{
-    let yyyy = fecha.getFullYear();
-    let mm = String(fecha.getMonth() + 1).padStart(2, '0'); // Los meses empiezan desde 0
-    let dd = String(fecha.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`
-  
+  applyFilter(): void {
+    const term = this.searchTerm.toLowerCase();
+    this.filteredEmpleados = this.empleados.filter(emp => 
+      emp.nombre.toLowerCase().includes(term) ||
+      emp.apellido.toLowerCase().includes(term) ||
+      emp.cedula.toLowerCase().includes(term)
+    );
   }
 
   showInsertForm(): void {
@@ -101,28 +56,102 @@ export default class AdminEmpleadosComponent implements OnInit {
     this.isEditing = false;
   }
 
-  deleteEmpleado(id: number): void {
-    this.empleadoService.deleteEmpleado(id).subscribe(() => this.getEmpleados());
+  editEmpleado(empleado: Empleado): void {
+    // Se crea una copia del empleado para evitar modificar el listado directamente
+    this.selectedEmpleado = { ...empleado };
+    this.isFormVisible = true;
+    this.isEditing = true;
   }
 
-  initializeEmpleado(): Empleado {
-    return {
-      id_empleado: null,
-      id_sucursal: null,
-      id_ciudad: null,
-      id_puesto: null,
-      cedula: '',
-      nombre: '',
-      fecha_nacimiento: null,
-      direccion: '',
-      telefono: '',
-      correo: '',
-      estado: ''
-    };
+  saveEmpleado(): void {
+    if (this.isEditing && this.selectedEmpleado._id) {
+      Swal.fire({
+        title: 'Confirmar actualización',
+        text: '¿Desea actualizar el empleado?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Actualizar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed && this.selectedEmpleado._id) {
+          this.empleadoService.updateEmpleado(this.selectedEmpleado._id, this.selectedEmpleado)
+            .subscribe(() => {
+              Swal.fire('Actualizado', 'Empleado actualizado exitosamente', 'success');
+              this.getEmpleados();
+              this.closeModal();
+            }, error => {
+              Swal.fire('Error', 'No se pudo actualizar el empleado', 'error');
+            });
+        }
+      });    } else {
+      Swal.fire({
+        title: 'Confirmar inserción',
+        text: '¿Desea agregar el nuevo empleado?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Agregar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.empleadoService.addEmpleado(this.selectedEmpleado)
+            .subscribe(() => {
+              Swal.fire('Agregado', 'Empleado agregado exitosamente', 'success');
+              this.getEmpleados();
+              this.closeModal();
+            }, error => {
+              Swal.fire('Error', 'No se pudo agregar el empleado', 'error');
+            });
+        }
+      });
+    }
+  }
+
+  deleteEmpleado(id: string): void {
+    Swal.fire({
+      title: '¿Está seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.empleadoService.deleteEmpleado(id).subscribe(() => {
+          Swal.fire('Eliminado', 'El empleado ha sido eliminado.', 'success');
+          this.getEmpleados();
+        }, error => {
+          Swal.fire('Error', 'No se pudo eliminar el empleado', 'error');
+        });
+      }
+    });
   }
 
   closeModal(): void {
     this.isFormVisible = false;
     this.selectedEmpleado = this.initializeEmpleado();
   }
+
+  onModalClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeModal();
+    }
+  }
+
+  initializeEmpleado(): Empleado {
+    return {
+      _id: '',
+      cedula: '',
+      nombre: '',
+      apellido: '',
+      fecha_nacimiento: '',
+      direccion: '',
+      telefono: '',
+      correo: '',
+      puesto: { nombre: 'Empleado', descripcion: '' },
+      sueldo: 0,
+      fecha_creacion: new Date().toISOString().split('T')[0],
+      estado: 'activo'
+    };
+  }
+  
 }

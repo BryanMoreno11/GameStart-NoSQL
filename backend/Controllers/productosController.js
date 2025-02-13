@@ -222,11 +222,47 @@ const deleteProducto = async (req, res) => {
   }
 };
 
+const updateClaveProducto = async (req, res) => {
+  const { id } = req.params; // ID del producto
+  const { index, newClave } = req.body; // índice de la clave a modificar y su nuevo valor
+
+  try {
+    const db = client.db(dbName);
+    const producto = await db.collection(collectionName).findOne({ _id: new ObjectId(id) });
+
+    if (!producto) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+
+    if (!producto.claves_digitales || !Array.isArray(producto.claves_digitales)) {
+      return res.status(400).json({ error: 'El producto no tiene claves digitales asignadas' });
+    }
+
+    if (index < 0 || index >= producto.claves_digitales.length) {
+      return res.status(400).json({ error: 'Índice fuera de rango' });
+    }
+
+    // Actualizar solo la clave en la posición especificada sin cambiar el orden
+    const updatedKeys = [...producto.claves_digitales];
+    updatedKeys[index] = newClave;
+
+    await db.collection(collectionName).updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { claves_digitales: updatedKeys } }
+    );
+
+    res.json({ message: 'Clave actualizada correctamente', claves_digitales: updatedKeys });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar la clave', details: error.message });
+  }
+};
+
 module.exports = {
   createProducto,
   getAllProductos,
   getProductoById,
   updateProducto,
   deleteProducto,
-  updateStockProducto
+  updateStockProducto,
+  updateClaveProducto
 };

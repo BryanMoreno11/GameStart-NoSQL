@@ -1,29 +1,26 @@
-/* General */
+/* ========== GENERAL ========== */
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #f4f4f4;
     margin: 0;
     padding: 0;
-}
-
-.admin-productos {
+  }
+  
+  .admin-productos {
     padding: 20px;
-}
-
-/* Contenedor para el título y el botón */
-.title-container {
+  }
+  
+  /* Título y botón Insertar */
+  .title-container {
     width: 600px;
     max-width: 100%;
     margin: 0 auto 20px auto;
     text-align: center;
-}
-
-.title-container h2 {
+  }
+  .title-container h2 {
     margin-bottom: 10px;
-}
-
-/* Botón Insertar reposicionado y adaptado */
-.insert-button {
+  }
+  .insert-button {
     width: 100%;
     padding: 8px 0;
     background-color: #16171a;
@@ -35,87 +32,72 @@ body {
     text-align: center;
     white-space: nowrap;
     transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.insert-button:hover {
+  }
+  .insert-button:hover {
     background-color: #14429f;
     transform: scale(1.02);
-}
-
-/* Filtro: sin wrap vertical, con scroll horizontal si es necesario */
-/* Contenedor para el filtro */
-.filter-container {
+  }
+  
+  /* ========== FILTRO ========== */
+  .filter-container {
     overflow-x: auto;
     padding: 0 10px;
     margin-bottom: 20px;
-}
-
-/* Contenedor interno que abraza los elementos del filtro y se centra cuando su ancho es el necesario */
-.filter-inner {
+  }
+  .filter-inner {
     display: flex;
     gap: 10px;
     width: max-content;
     margin: 0 auto;
-}
-
-/* Opcional: asegurar que los inputs y select no sean demasiado pequeños */
-.filter-container input,
-.filter-container select {
+  }
+  .filter-container input,
+  .filter-container select {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
     flex: 0 0 auto;
     max-width: 175px;
-}
-
-/* Contenedor responsive para la tabla */
-.table-responsive {
+  }
+  
+  /* ========== TABLA ========== */
+  .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-}
-
-table {
+  }
+  table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
-}
-
-table th,
-table td {
+  }
+  table th,
+  table td {
     border: 1px solid #ddd;
     padding: 12px;
-}
-
-table th {
+  }
+  table th {
     background-color: #16171a;
     color: #fff;
-}
-
-table tr:nth-child(even) {
+  }
+  table tr:nth-child(even) {
     background-color: #f2f2f2;
-}
-
-table tr:hover {
+  }
+  table tr:hover {
     background-color: #ddd;
-}
-
-/* Centrar contenido en celdas */
-.admin-productos table td {
+  }
+  .admin-productos table td {
     text-align: center;
-}
-
-/* Para la columna de Descripción, asignar mayor ancho */
-.admin-productos table td:nth-child(10) {
+  }
+  /* Ajusta la última columna si lo deseas */
+  .admin-productos table td:nth-child(10) {
     text-align: justify;
-    min-width: 250px; /* Ajusta este valor según convenga */
-}
-
-/* Botones de la tabla: se usan contenedores para separación vertical */
-.btn-container {
+    min-width: 250px;
+  }
+  
+  /* Botones en la tabla */
+  .btn-container {
     margin-bottom: 5px;
-}
-
-.admin-productos table td button {
+  }
+  .admin-productos table td button {
     width: 120px;
     background-color: #16171a;
     color: #fff;
@@ -126,51 +108,120 @@ table tr:hover {
     border-radius: 4px;
     cursor: pointer;
     transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.admin-productos table td button:hover {
+  }
+  .admin-productos table td button:hover {
     background-color: #14429f;
     transform: scale(1.05);
-}
+  }
+  
+  /* Imagen en la tabla */
+  .admin-productos table td img.product-img {
+    width: 100px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  
+  /* ========== MINI CARRUSEL ========== */
+  .mini-carousel {
+    position: relative;
+    width: 100px;   /* mismo ancho que .product-img */
+    height: 70px;
+    margin: 0 auto;
+  }
+  
+  /* Flechas transparentes */
+  .carousel-btn {
+    position: absolute;
+    top: 50%;
+    background-color: rgba(0, 0, 0, 0.3); /* botoncito semitransparente */
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 16px;
+  }
 
-/* Formularios del modal */
-/* Agrupar elementos con títulos */
-.form-group {
+  /* Sobrescribe el estilo genérico, usando una especificidad mayor */
+.mini-carousel .carousel-btn {
+    /* Quita el ancho fijo heredado */
+    width: 24px !important;
+    height: 24px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+  
+    /* Botón semitransparente */
+    background-color: rgba(0,0,0,0.3) !important;
+    color: #fff !important;
+    border: none;
+    border-radius: 50%;  /* redondo (opcional) */
+  
+    /* Ajusta el tamaño de la flecha */
+    font-size: 14px;      /* más pequeño si quieres */
+    line-height: 1;
+  
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .mini-carousel .carousel-btn:hover {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+  }
+  
+
+  .carousel-btn:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Izquierda y derecha */
+  .carousel-btn.left {
+    left: 0;
+  }
+  .carousel-btn.right {
+    right: 0;
+  }
+  
+  /* ========== FORMULARIO / MODAL ========== */
+  form .form-group {
+    flex: 1 1 45%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .form-group {
     margin-bottom: 15px;
     display: flex;
     flex-direction: column;
-}
-
-.form-group label {
+  }
+  .form-group label {
     font-weight: bold;
     margin-bottom: 5px;
     color: #333;
-}
-
-form input,
-form select,
-form textarea {
+  }
+  
+  /* Ajuste general de inputs/select/textarea */
+  form input,
+  form select,
+  form textarea {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
     width: 100%;
     box-sizing: border-box;
-}
-
-form {
+  }
+  form {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-}
-
-form > * {
-    flex: 1 1 45%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-form button {
+  }
+  .large-text {
+    min-height: 120px;
+    resize: vertical;
+  }
+  form button {
     width: 120px;
     flex: 1 1 100%;
     margin: 10px auto 0 auto;
@@ -181,21 +232,14 @@ form button {
     border-radius: 4px;
     cursor: pointer;
     transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-form button:hover {
+  }
+  form button:hover {
     background-color: #14429f;
     transform: scale(1.05);
-}
-
-/* Estilo para textareas de mayor tamaño */
-textarea.large-text {
-    min-height: 120px;
-    resize: vertical;
-}
-
-/* Modal */
-.modal {
+  }
+  
+  /* Modal */
+  .modal {
     display: none;
     position: fixed;
     z-index: 10;
@@ -206,36 +250,26 @@ textarea.large-text {
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0.4);
     transition: opacity 0.3s ease;
-}
-
-.modal.is-visible {
+  }
+  .modal.is-visible {
     display: block;
-}
-
-
-/* Modal Content con scroll interno */
-.modal-content {
+  }
+  .modal-content {
     background-color: #fff;
-    /* Baja el margen superior para que el modal se vea más arriba */
-    margin: 5% auto; 
+    margin: 5% auto;
     margin-top: 25%;
     padding: 20px;
     border: 1px solid #888;
-    
-    /* Haz el ancho más estrecho y limita la altura para que se vea parte de atrás */
     width: 75%;
-    max-width: 500px;      /* ancho máximo en escritorio */
-    max-height: 70vh;      /* menor altura máxima para que se alcance a ver el fondo */
-    
+    max-width: 500px;
+    max-height: 70vh;
     overflow-y: auto;
     border-radius: 8px;
     position: relative;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
-}
-
-/* Close button */
-.close-button {
+  }
+  .close-button {
     color: #aaa;
     position: absolute;
     right: 10px;
@@ -243,79 +277,144 @@ textarea.large-text {
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
-}
-
-.close-button:hover {
+  }
+  .close-button:hover {
     color: #000;
-}
+  }
+  
+  /* Botones de URL imagen */
+  .image-urls-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+  .image-url-entry {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .image-url-entry input {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
 
-/* Tabla de claves en modal (SweetAlert2) */
-.keys-table {
+  .image-url-entry .image-button {
+    flex: 0 0 auto !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+
+  .image-button {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .remove-image-button {
+    background-color: #dc3545;
+  }
+  .remove-image-button:hover {
+    background-color: #c82333;
+  }
+  .add-image-button {
+    background-color: #28a745;
+    margin-top: 10px;
+  }
+  .add-image-button:hover {
+    background-color: #218838;
+  }
+  
+  /* ========== SWEETALERT2 (Claves Digitales) ========== */
+  .keys-table {
     width: 100%;
     border-collapse: collapse;
-}
-
-.keys-table th,
-.keys-table td {
+  }
+  .keys-table th,
+  .keys-table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
-}
-
-.keys-table th {
+  }
+  .keys-table th {
     background-color: #16171a;
     color: #fff;
+  }
+
+  .admin-productos table th:nth-child(10),
+.admin-productos table td:nth-child(10) {
+  text-align: justify;
+  min-width: 350px; /* Aumenta este valor según lo necesites */
 }
 
-.admin-productos table td img.product-img {
-    width: 100px;        /* O el ancho deseado */
-    height: 70px;        /* Una altura fija para efecto rectangular */
-    object-fit: cover;   /* Para recortar la imagen manteniendo la proporción */
-    border-radius: 4px;  /* Opcional, para un pequeño redondeo */
+@media (max-width: 600px) {
+  /* Increase description column width */
+  .admin-productos table th:nth-child(10),
+  .admin-productos table td:nth-child(10) {
+    min-width: 250px;
+    max-width: 250px;
+    word-wrap: break-word;
+  }
+
+  /* Decrease options column width */
+  .admin-productos table th:nth-child(11),
+  .admin-productos table td:nth-child(11) {
+    min-width: 80px;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
-/* Media Queries para dispositivos móviles */
-@media (max-width: 768px) {
+  
+  /* Responsive */
+  @media (max-width: 768px) {
     .admin-productos table td img.product-img {
-        width: 80px;
-        height: 56px;
+      width: 80px;
+      height: 56px;
     }
-    
     .title-container {
-        width: 90%;
+      width: 90%;
     }
-  
-    /* Se mantiene la disposición horizontal de filtros sin que se rompa la línea */
     .filter-container {
-        gap: 5px;
+      gap: 5px;
     }
-  
-    form > * {
-        flex: 1 1 100%;
+    /* En móvil, .form-group a 100% de ancho */
+    form .form-group {
+      flex: 1 1 100%;
     }
-
     .close-button {
-        font-size: 28px;
+      font-size: 28px;
     }
-
     .modal-content {
-        height: 75%;
+      height: 75%;
     }
-
-}
-
-@media (max-height: 545px) {
+  }
+  
+  @media (max-height: 545px) {
     .modal-content {
-        margin-top: 8%;
+      margin-top: 8%;
     }
-
-}
-
-@media (min-width: 820px) {
+  }
+  
+  @media (min-width: 820px) {
     .modal-content {
-        margin: 5% auto; 
-        margin-top: 8%;
-
+      margin: 5% auto;
+      margin-top: 8%;
     }
-
-}
+  }
+  

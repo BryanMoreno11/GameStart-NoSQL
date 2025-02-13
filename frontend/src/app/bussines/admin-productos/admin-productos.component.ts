@@ -17,6 +17,9 @@ export default class AdminProductosComponent implements OnInit {
   filteredProductos: Producto[] = [];
   plataformas: Plataforma[] = [];
 
+  // Diccionario para índices del carrusel: productId -> índice actual
+  carouselIndex: { [productId: string]: number } = {};
+
   // Filtros
   searchName: string = '';
   filterType: string = '';
@@ -42,6 +45,14 @@ export default class AdminProductosComponent implements OnInit {
     this.productosService.getProductos().subscribe(prod => {
       this.productos = prod;
       this.filteredProductos = prod;
+
+      // Asegurar índices de carrusel en 0 para cada producto
+      prod.forEach((p) => {
+        if (!this.carouselIndex[p._id]) {
+          this.carouselIndex[p._id] = 0;
+        }
+      });
+
       this.cdr.detectChanges();
     });
   }
@@ -56,8 +67,13 @@ export default class AdminProductosComponent implements OnInit {
   applyFilter(): void {
     this.filteredProductos = this.productos.filter(prod => {
       const matchesName = prod.nombre.toLowerCase().includes(this.searchName.toLowerCase());
-      const matchesType = this.filterType ? prod.tipo?.nombre.toLowerCase() === this.filterType.toLowerCase() : true;
-      const matchesPlatform = this.filterPlatform ? prod.plataforma?.nombre.toLowerCase() === this.filterPlatform.toLowerCase() : true;
+      const matchesType = this.filterType
+        ? prod.tipo?.nombre.toLowerCase() === this.filterType.toLowerCase()
+        : true;
+      const matchesPlatform = this.filterPlatform
+        ? prod.plataforma?.nombre.toLowerCase() === this.filterPlatform.toLowerCase()
+        : true;
+
       return matchesName && matchesType && matchesPlatform;
     });
   }
@@ -68,12 +84,96 @@ export default class AdminProductosComponent implements OnInit {
     this.isEditing = false;
   }
 
+  comparePlatforms(p1: any, p2: any): boolean {
+    return p1?.nombre === p2?.nombre;
+  }
+
   editProducto(producto: Producto): void {
-    // Clonamos el producto para evitar mutaciones directas
-    this.selectedProducto = { ...producto };
+    this.selectedProducto = {
+      ...producto,
+      plataforma: { ...producto.plataforma },
+      genero: { ...producto.genero },
+      tipo: { ...producto.tipo },
+      imagenes: [...(producto.imagenes || [])]
+    };
     this.isFormVisible = true;
     this.isEditing = true;
   }
+
+  // Métodos para el mini carrusel
+  nextImage(producto: Producto): void {
+    if (!producto.imagenes || !producto.imagenes.length) return;
+    const current = this.carouselIndex[producto._id] || 0;
+    const total = producto.imagenes.length;
+    // Avanzar índice
+    const next = (current + 1) % total;
+    this.carouselIndex[producto._id] = next;
+  }
+
+  prevImage(producto: Producto): void {
+    if (!producto.imagenes || !producto.imagenes.length) return;
+    const current = this.carouselIndex[producto._id] || 0;
+    const total = producto.imagenes.length;
+    // Retroceder índice (con wrap)
+    const prev = (current - 1 + total) % total;
+    this.carouselIndex[producto._id] = prev;
+  }
+
+  // Nueva función para editar una clave digital específica (ejemplo)
+  editClaves(producto: Producto): void {
+    if (!producto.claves_digitales || producto.claves_digitales.length === 0) {
+      Swal.fire('Sin claves', 'Este producto no tiene claves digitales asignadas.', 'info');
+      return;
+    }
+    // Mostrar las claves actuales separadas por coma
+    const clavesActuales = producto.claves_digitales.join(', ');
+    // Primero, solicitar el índice de la clave a modificar:
+    Swal.fire({
+      title: 'Editar Clave Digital',
+      input: 'number',
+      inputLabel: 'Ingrese el índice de la clave que desea modificar (0 a ' + (producto.claves_digitales.length - 1) + ')',
+      inputPlaceholder: 'Ejemplo: 0',
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (value === '' || isNaN(Number(value))) {
+          return 'Debe ingresar un número válido';
+        }
+        const idx = Number(value);
+        if (idx < 0 || idx >= (producto.claves_digitales?.length || 0)) {
+          return 'El índice está fuera de rango';
+        }
+        return null;
+      }
+    }).then((indiceResult) => {
+      if (indiceResult.isConfirmed) {
+        const index = Number(indiceResult.value);
+        // Ahora solicita el nuevo valor para la clave seleccionada
+        Swal.fire({
+          title: 'Nueva clave',
+          input: 'text',
+          inputLabel: 'Ingrese el nuevo valor para la clave',
+          inputValue: producto.claves_digitales?.[index] ?? '',
+          showCancelButton: true,
+          inputValidator: (value) => {
+            if (!value || value.trim() === '') {
+              return 'La clave no puede estar vacía';
+            }
+            return null;
+          }
+        }).then((claveResult) => {
+          if (claveResult.isConfirmed) {
+            const newClave = claveResult.value.trim();
+            this.productosService.updateClaveProducto(producto._id, index, newClave)
+              .subscribe(() => {
+                Swal.fire('Actualizado', 'La clave digital ha sido actualizada', 'success');
+                this.getProductos();
+              }, error => {
+                Swal.fire('Error', 'No se pudo actualizar la clave', 'error');
+              });
+          }
+        });
+      }
+    });  }
 
   saveProducto(): void {
     if (this.isEditing && this.selectedProducto._id) {
@@ -120,7 +220,7 @@ export default class AdminProductosComponent implements OnInit {
   deleteProducto(id: string): void {
     Swal.fire({
       title: '¿Está seguro?',
-      text: "Esta acción no se puede deshacer.",
+      text: 'Esta acción no se puede deshacer.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, eliminar',
@@ -136,33 +236,19 @@ export default class AdminProductosComponent implements OnInit {
   }
 
   viewKeys(producto: Producto): void {
-    if (producto.claves_digitales && producto.claves_digitales.length > 0) {
-      let keysHtml = `<table class="keys-table">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Válido</th>
-            </tr>
-          </thead>
-          <tbody>`;
-      producto.claves_digitales.forEach(key => {
-        keysHtml += `<tr>
-            <td>${key.codigo}</td>
-            <td>${key.valido ? 'Válido' : 'No válido'}</td>
-          </tr>`;
-      });
-      keysHtml += `</tbody></table>`;
+    if (producto.tipo?.nombre && producto.tipo.nombre.toLowerCase() === 'digital' &&
+        producto.claves_digitales && producto.claves_digitales.length) {
+      const clavesTexto = producto.claves_digitales.join(', ');
       Swal.fire({
         title: 'Claves del Producto',
-        html: keysHtml,
+        html: `<div style="text-align:center; font-size:16px;">${clavesTexto}</div>`,
         width: '600px'
       });
     } else {
-      Swal.fire('Sin claves', 'Este producto no tiene claves generadas', 'info');
+      Swal.fire('Sin claves', 'Este producto no tiene claves digitales generadas', 'info');
     }
   }
 
-  // Actualizar stock usando SweetAlert2 para solicitar el nuevo valor
   changeStock(producto: Producto): void {
     Swal.fire({
       title: 'Cambiar Stock',
@@ -175,7 +261,8 @@ export default class AdminProductosComponent implements OnInit {
           return 'Debe ingresar un número válido';
         }
         return null;
-      }    }).then((result) => {
+      }
+    }).then((result) => {
       if (result.isConfirmed) {
         const newStock = Number(result.value);
         this.productosService.updateStockProducto(producto._id, newStock).subscribe(() => {
@@ -192,11 +279,10 @@ export default class AdminProductosComponent implements OnInit {
   }
 
   onModalClick(event: MouseEvent): void {
-  // Si el click se hizo sobre el contenedor (y no en su contenido)
-  if (event.target === event.currentTarget) {
-    this.closeModal();
+    if (event.target === event.currentTarget) {
+      this.closeModal();
+    }
   }
-}
 
   initializeProducto(): Producto {
     return {
@@ -213,5 +299,13 @@ export default class AdminProductosComponent implements OnInit {
       descripcion: '',
       claves_digitales: null
     };
+  }
+
+  addImageUrl(): void {
+    this.selectedProducto.imagenes.push('');
+  }
+
+  removeImageUrl(index: number): void {
+    this.selectedProducto.imagenes.splice(index, 1);
   }
 }

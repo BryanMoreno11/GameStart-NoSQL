@@ -36,6 +36,11 @@ export class ProductosService {
     return this.http.put(`${this.urlBase}productos/${id}/stock`, { newStock });
   }
 
+  // Actualiza una clave digital específica del producto (ruta: /productos/:id/claves)
+  updateClaveProducto(id: number | string, index: number, newClave: string): Observable<any> {
+    return this.http.put(`${this.urlBase}productos/${id}/claves`, { index, newClave });
+  }
+
   // Elimina un producto
   deleteProducto(id: number | string): Observable<any> {
     return this.http.delete(`${this.urlBase}productos/${id}`);
@@ -72,7 +77,6 @@ export interface Producto {
   imagenes: string[]; 
   fecha_creacion: string | Date; 
   descripcion: string;
-  // Para productos digitales, en el backend se almacenan como objetos con { codigo, usada }.
-  // Puedes ajustar el tipo según corresponda.
-  claves_digitales?: any[] | null; 
+  // Para productos digitales, en el backend se almacenan como un arreglo de strings.
+  claves_digitales?: string[] | null; 
 }

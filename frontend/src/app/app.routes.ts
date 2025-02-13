@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+
 import { InicioComponent } from './components/inicio/inicio.component';
 import { VideojuegoDetalleComponent } from './components/videojuego-detalle/videojuego-detalle.component';
 import { LoginUserComponent } from './components/login-user/login-user.component';
@@ -30,7 +31,6 @@ export const routes: Routes = [
   { path: 'login-client', component: LoginClientComponent },
   { path: 'register-client', component: RegisterClientComponent },
   { path: 'reportes', component: ReportesComponent },
-
   {
     path: 'admin',
     component: LayoutComponent,
@@ -38,7 +38,7 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
       { path: 'empleados', component: AdminEmpleadosComponent, canActivate: [AuthGuard] },
       { path: 'pedidos', component: AdminPedidosComponent, canActivate: [AuthGuard] },
-      { path: 'productos', component: AdminProductosComponent, canActivate: [AuthGuard] } // <-- Nueva ruta para productos
+      { path: 'productos', component: AdminProductosComponent, canActivate: [AuthGuard] } // <-- Ruta para productos
     ]
   },
   { path: '', pathMatch: 'full', redirectTo: 'inicio' },
