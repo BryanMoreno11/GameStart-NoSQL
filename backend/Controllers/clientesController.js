@@ -1,7 +1,6 @@
-const { MongoClient, ObjectId } = require('mongodb');
+const { ObjectId } = require('mongodb');
 const client = require('../database');
 const { encrypt, compare } = require("../helpers/handleBcrypt");
-const { get } = require('mongoose');
 const jwt = require('jsonwebtoken');
 const SECRET_JWT_KEY = 'prueba';
 
