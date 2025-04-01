@@ -36,7 +36,7 @@ export class RegisterUserComponent {
           icon: 'success'
         })
         // Redirigir al componente del QR con el secret
-        this.router.navigate(['/qr-verify'], { queryParams: { nombre: res.nombre } });
+        this.router.navigate(['/qr-verify'], { queryParams: { _id: res._id } });
       } else {
         Swal.fire({
           title: 'Error',

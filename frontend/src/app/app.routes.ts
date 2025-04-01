@@ -34,6 +34,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: LayoutComponent,
+    canActivate:[AuthGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
       { path: 'empleados', component: AdminEmpleadosComponent, canActivate: [AuthGuard] },

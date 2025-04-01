@@ -3,7 +3,7 @@ const qrcode = require('qrcode');
 const client = require('../database');
 const dbName = "gameStart";
 const collectionName = "usuarios";
-
+const { ObjectId } = require('mongodb');
 
 async function verify(req, res) {
     console.log('Verificando token...');
@@ -30,16 +30,17 @@ async function verify(req, res) {
 }
 
 async function generateQrCode(req, res) {
-    const { nombre } = req.query;
-    console.log('Nombre recibido:', nombre);
+    const { _id } = req.query;
+    console.log("La id es: ", _id);
 
     try {
         const db = client.db(dbName);
         const usuarios = db.collection(collectionName);
 
-        const usuario = await usuarios.findOne({ nombre: nombre });
+        const usuario = await usuarios.findOne({ _id: new ObjectId(_id) });
 
         if (usuario) {
+
             const secret = usuario.secret;
 
             const otpauthUrl = speakeasy.otpauthURL({

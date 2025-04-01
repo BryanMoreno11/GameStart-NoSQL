@@ -21,13 +21,14 @@ export class AuthenticateQrComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      const nombre = params['nombre'];
-      this.generateQRCode(nombre);
+      const _id = params['_id'];
+      console.log(_id);  
+      this.generateQRCode(_id);
     });
   }
 
-  generateQRCode(nombre: string) {
-    this.http.get<any>(`http://localhost:3000/api/generate-qr`, { params: { nombre } }).subscribe(
+  generateQRCode(_id: string) {
+    this.http.get<any>(`http://localhost:3000/api/generate-qr`, { params: { _id } }).subscribe(
       res => {
         if (res.qrCode) {
           this.qrCodeUrl = res.qrCode;
