@@ -24,14 +24,14 @@ export class VerificacionTokenComponent {
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-        const nombre = params['nombre'];
-        console.log('El nombre es:', nombre);
-        this.getSecret(nombre);
+        const correo = params['correo'];
+        console.log('El correo es:', correo);
+        this.getSecret(correo);
     });
 }
 
-getSecret(nombre: string) {
-    this.http.get<any>(`http://localhost:3000/api/usuarionombre/${nombre}`).subscribe(
+getSecret(correo: string) {
+    this.http.get<any>(`http://localhost:3000/api/usuariocorreo/${correo}`).subscribe(
         res => {
           this.secret = res.secret;
         },

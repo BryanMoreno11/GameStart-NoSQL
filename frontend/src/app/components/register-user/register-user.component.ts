@@ -24,7 +24,7 @@ export class RegisterUserComponent {
     estado: ''
   };
 
-  constructor(private http:HttpClient, private usuariosService:UsuariosService, private router:Router) {}
+  constructor(private usuariosService:UsuariosService, private router:Router) {}
 
   insertarUsuario() {
     this.usuariosService.insertarUsuario(this.usuario).subscribe(res => {
@@ -36,7 +36,7 @@ export class RegisterUserComponent {
           icon: 'success'
         })
         // Redirigir al componente del QR con el secret
-        this.router.navigate(['/qr-verify'], { queryParams: { _id: res._id } });
+        this.router.navigate(['/qr-verify'], { queryParams: { correo: res.correo } });
       } else {
         Swal.fire({
           title: 'Error',
@@ -44,6 +44,14 @@ export class RegisterUserComponent {
           icon: 'error'
         })
       }
-    });
+    },
+    err => {
+      Swal.fire({
+        title: 'Error',
+        text: err.error.message,
+        icon: 'error'
+      })
+    }
+  );
   }
 }

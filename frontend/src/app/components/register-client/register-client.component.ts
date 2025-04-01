@@ -59,6 +59,15 @@ export class RegisterClientComponent {
           icon: 'error'
         })
       }
-    });
+    },
+    err=>{
+      console.log("Error al crear ")
+      Swal.fire({
+        title: 'Error',
+        text: err.error.message,
+        icon: 'error'
+      })
+    }
+  );
   }
 }

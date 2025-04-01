@@ -87,6 +87,7 @@ const verifyLogin = async(req, res) => {
 
 //crear un cliente
 const createCliente = async(req, res) => {
+    const db = client.db(dbName);
     const { id_ciudad, cedula, nombre, apellido, fecha_nacimiento, telefono, correo, contrasenia } = req.body;
     const passwordHash = await encrypt(contrasenia);
     const nuevoCliente = {
@@ -99,6 +100,10 @@ const createCliente = async(req, res) => {
         correo,
         passwordHash
     };
+    const clienteExistente = await db.collection(collectionName).findOne({ correo });
+    if (clienteExistente){
+        return res.status(404).json({ message: "El correo ya existe" });
+    }
 
     try {
         const db = client.db(dbName);

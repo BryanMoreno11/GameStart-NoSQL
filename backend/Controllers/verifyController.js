@@ -30,17 +30,16 @@ async function verify(req, res) {
 }
 
 async function generateQrCode(req, res) {
-    const { _id } = req.query;
-    console.log("La id es: ", _id);
+    const { correo } = req.query;
+    console.log("El correo es: ", correo);
 
     try {
         const db = client.db(dbName);
         const usuarios = db.collection(collectionName);
 
-        const usuario = await usuarios.findOne({ _id: new ObjectId(_id) });
+        const usuario = await usuarios.findOne({ correo: correo });
 
         if (usuario) {
-
             const secret = usuario.secret;
 
             const otpauthUrl = speakeasy.otpauthURL({

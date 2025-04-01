@@ -25,20 +25,20 @@ async function getUsuario(req, res) {
 }
 
 //obtener usuario por correo
-async function getUsuarioNombre(req, res) {
-    const { nombre } = req.params;
+async function getUsuarioCorreo(req, res) {
+    const { correo } = req.params;
 
     try {
         const db = client.db(dbName);
-        const usuario = await db.collection(collectionName).findOne({ correo: nombre });
+        const usuario = await db.collection(collectionName).findOne({ correo: correo });
 
         if (usuario) {
             res.status(200).json(usuario);
         } else {
-            res.status(404).json({ message: "No existe el usuario según el nombre" });
+            res.status(404).json({ message: "No existe el usuario según el correo" });
         }
     } catch (err) {
-        console.error("Error al obtener usuario por nombre:", err);
+        console.error("Error al obtener usuario por correo:", err);
         res.status(500).json({ error: "Error en el servidor" });
     }
 }
@@ -55,7 +55,7 @@ async function getUsuarioLogin(req, res) {
             const passwordMatch = await compare(contrasenia, usuario.passwordHash);
             if (passwordMatch) {
                 const accessToken = jwt.sign({ username: usuario._id }, SECRET_JWT_KEY, { expiresIn: '1h' });
-                res.status(200).json({ succes: true, message: 'Login exitoso', id_cliente: usuario._id, nombre: usuario.nombre, accessToken });
+                res.status(200).json({ succes: true, message: 'Login exitoso', id_cliente: usuario._id, nombre: usuario.nombre, correo: usuario.correo, accessToken });
             } else {
                 res.status(401).json({ message: "Nombre de usuario o contraseña incorrecto" });
             }
@@ -94,6 +94,12 @@ async function createUsuario(req, res) {
         const secret = speakeasy.generateSecret({ length: 20 }).base32;
 
         const db = client.db(dbName);
+        const usuarioExistente = await db.collection(collectionName).findOne({ correo });
+        if (usuarioExistente){
+            return res.status(404).json({ message: "El correo ya existe" });
+        }
+
+
         const resultado = await db.collection(collectionName).insertOne({
             nombre,
             passwordHash,
@@ -105,7 +111,7 @@ async function createUsuario(req, res) {
         });
 
         if (resultado.insertedId) {
-            res.status(201).json({ message: "Usuario creado", nombre, secret });
+            res.status(201).json({ message: "Usuario creado", nombre, secret, correo });
         } else {
             res.status(400).json({ message: "No se pudo guardar el usuario" });
         }
@@ -117,7 +123,7 @@ async function createUsuario(req, res) {
 
 module.exports = {
     getUsuario,
-    getUsuarioNombre,
+    getUsuarioCorreo,
     getUsuarioLogin,
     verifyLogin,
     createUsuario

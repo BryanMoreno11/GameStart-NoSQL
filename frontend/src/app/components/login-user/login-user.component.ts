@@ -14,13 +14,13 @@ import { Router } from '@angular/router';
 })
 export class LoginUserComponent {
 
-  nombre: string = '';
+  correo: string = '';
   contrasenia: string = '';
   
   constructor(private http:HttpClient, private usuariosService:UsuariosService, private router:Router) {}
 
   getUsuario(){
-    this.usuariosService.getUsuarioLogin(this.nombre, this.contrasenia).subscribe(
+    this.usuariosService.getUsuarioLogin(this.correo, this.contrasenia).subscribe(
       res => {
         if(res.succes){
           Swal.fire({
@@ -30,7 +30,7 @@ export class LoginUserComponent {
           })
         }
         localStorage.setItem('authToken', res.accessToken);
-        this.router.navigate(['/token-verify'], { queryParams: { nombre: this.nombre } });
+        this.router.navigate(['/token-verify'], { queryParams: { correo: this.correo } });
       },
       err => {
         Swal.fire({
