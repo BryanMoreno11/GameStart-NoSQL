@@ -33,7 +33,7 @@ export class VerificacionTokenComponent {
 getSecret(nombre: string) {
     this.http.get<any>(`http://localhost:3000/api/usuarionombre/${nombre}`).subscribe(
         res => {
-          this.secret = res[0].SECRET;
+          this.secret = res.secret;
         },
         err => {
             console.log(err);
@@ -43,6 +43,7 @@ getSecret(nombre: string) {
   
 
   verify(): void {
+    console.log('Verificando token...' + this.authToken);
     this.authService.verifyToken(this.authToken, this.secret).subscribe(
       response => {
         this.verificationResult = response.verified;
@@ -50,9 +51,15 @@ getSecret(nombre: string) {
           title: 'Verificacion exitosa',
           text: 'Has iniciado sesion',
           icon: 'success'
-        })
-        localStorage.setItem('loginAdmin', 'true');
-        this.router.navigate(['/admin/dashboard']);
+        }).then(() => {
+          localStorage.setItem('loginUsuario', 'true');
+          localStorage.setItem('loginAdmin', 'true');
+          this.router.navigate(['/admin/dashboard']).then(()=>{
+            window.location.reload();
+          });
+        });
+       
+
       },
       error => {
         console.error('Error en la verificación del token:', error);

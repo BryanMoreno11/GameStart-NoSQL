@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-navbar',
@@ -11,7 +12,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class NavbarComponent {
   navbarOpen = false;
-  linkText: string = 'Mi cuenta';
+  linkText: string = 'Cerrar sesión';
   linkRoute: string = '/login-client';
   isLoggedIn: boolean = false;
 
@@ -20,15 +21,13 @@ export class NavbarComponent {
   }
 
   ngOnInit() {
-    this.actualizarNavbar();
+  this.actualizarNavbar();
   }
 
   actualizarNavbar() {
     const valor = localStorage.getItem('loginUsuario') === 'true';
-    if(valor){
-      const nombreCliente = localStorage.getItem('nombre_cliente');
-      this.linkText = nombreCliente ? nombreCliente : 'Inicio de sesión';
-      this.linkRoute = '/mi-cuenta';
+    const token= localStorage.getItem('loginAdmin');
+    if(valor || token){
       this.isLoggedIn = valor;
     }else{
       this.linkText = 'Inicio de sesión';
@@ -37,9 +36,27 @@ export class NavbarComponent {
   }
 
   logout(){
+    const valor = localStorage.getItem('loginUsuario') === 'true';
+    const token= localStorage.getItem('loginAdmin');
+    if(valor || token){
     console.log('Se esta borrando...');
     localStorage.clear();
     this.isLoggedIn = false;
     this.actualizarNavbar();
+    this.mostrarMensaje("Cierre de sesión", "Sesión cerrada con éxito", "success");
+    }
   }
+
+  mostrarMensaje(titulo:string, mensaje:string, icono:any) {
+    Swal.fire({
+        title: titulo,
+        text: mensaje,
+        icon: icono
+      });
+  }
+
+
+
+
+
 }

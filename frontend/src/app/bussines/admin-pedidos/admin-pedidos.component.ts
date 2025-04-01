@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { PedidoService } from '../../services/pedidos.service';
-import { Pedido } from '../../models/pedido';
+import { ProductosService, Producto } from '../../services/productos.service';
+import { ApiPedido, Pedido } from '../../models/pedido';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -12,26 +13,31 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./admin-pedidos.component.css']
 })
 export default class AdminPedidosComponent implements OnInit {
-  pedidos: Pedido[] = [];
+  pedidos: ApiPedido[] = [];
+  productos: Producto[] = [];
   proveedores: any[] = [];
   videojuegosPlataformas: any[] = [];
   sucursales: any[] = [];
-  selectedPedido: Pedido = this.initializePedido();
+  selectedPedido: ApiPedido = this.initializePedido();
   isFormVisible: boolean = false;
   isEditing: boolean = false;
   validationMessages: { [key: string]: string } = {};
 
-  constructor(private pedidoService: PedidoService, private cdr: ChangeDetectorRef) { }
+  constructor(private pedidoService: PedidoService, 
+              private cdr: ChangeDetectorRef,
+              private productoService: ProductosService) { }
 
   ngOnInit(): void {
     this.getPedidos();
     this.getProveedores();
     this.getVideojuegosPlataformas();
     this.getSucursales();
+    this.getVideojuegos();
   }
 
   getPedidos(): void {
     this.pedidoService.getPedidos().subscribe(pedidos => {
+      console.log(pedidos);
       this.pedidos = pedidos;
     });
   }
@@ -39,13 +45,23 @@ export default class AdminPedidosComponent implements OnInit {
   getProveedores(): void {
     this.pedidoService.getProveedores().subscribe(proveedores => {
       this.proveedores = proveedores;
+      console.log('Los proveedores son', proveedores);
       this.cdr.detectChanges();
     });
   }
 
+  getVideojuegos(): void{
+    this.productoService.getProductos().subscribe(productos => {
+      this.productos = productos;
+      this.cdr.detectChanges();
+    })
+  }
+
   getVideojuegosPlataformas(): void {
+    console.log('Obteniendo Videojuegos Plataformas...');
     this.pedidoService.getVideojuegosPlataformas().subscribe(videojuegosPlataformas => {
       this.videojuegosPlataformas = videojuegosPlataformas;
+      console.log(this.videojuegosPlataformas);
       this.cdr.detectChanges();
     });
   }
@@ -74,20 +90,12 @@ export default class AdminPedidosComponent implements OnInit {
   validatePedido(): boolean {
     this.validationMessages = {};
 
-    if (this.selectedPedido.id_proveedor === -1) {
-      this.validationMessages['id_proveedor'] = 'Seleccione un proveedor.';
+    if (Number(this.selectedPedido.proveedor._id) === -1) {
+      this.validationMessages['_id'] = 'Seleccione un proveedor.';
     }
 
-    if (this.selectedPedido.id_videojuego_plataforma === -1) {
+    if (Number(this.selectedPedido.producto.plataforma.nombre )=== -1) {
       this.validationMessages['id_videojuego_plataforma'] = 'Seleccione un videojuego plataforma.';
-    }
-
-    if (this.selectedPedido.id_sucursal === -1) {
-      this.validationMessages['id_sucursal'] = 'Seleccione una sucursal.';
-    }
-
-    if (this.selectedPedido.estado === '') {
-      this.validationMessages['estado'] = 'Seleccione un estado.';
     }
 
     if (this.selectedPedido.precio_unitario === null || this.selectedPedido.precio_unitario <= 0) {
@@ -107,23 +115,28 @@ export default class AdminPedidosComponent implements OnInit {
 
   savePedido(): void {
     if (!this.validatePedido()) {
+      console.log('Errores de validación:', this.validationMessages);
       return;
     }
 
     this.selectedPedido.total = this.calculateTotal(); // Actualizar total antes de guardar
 
-    if (this.isEditing && this.selectedPedido.id_pedido) {
-      this.pedidoService.updatePedido(this.selectedPedido.id_pedido, this.selectedPedido).subscribe(() => {
+    if (this.isEditing && this.selectedPedido._id) {
+      console.log('Actualizando pedido...', this.selectedPedido);
+      this.pedidoService.updatePedido(this.selectedPedido._id, this.selectedPedido).subscribe(() => {
         this.getPedidos();
         this.isFormVisible = false;
         this.selectedPedido = this.initializePedido();
       });
     } else {
       // Validar si el ID del nuevo pedido ya existe
-      if (this.pedidos.some(p => p.id_pedido === this.selectedPedido.id_pedido)) {
+      if (this.pedidos.some(p => p._id === this.selectedPedido._id)) {
         alert('El ID del pedido ya existe.');
         return;
+
       }
+      console.log('Los videojuegos son ',this.productos);
+      console.log('Guardando pedido...', this.selectedPedido);
       this.pedidoService.addPedido(this.selectedPedido).subscribe(() => {
         this.getPedidos();
         this.isFormVisible = false;
@@ -132,11 +145,15 @@ export default class AdminPedidosComponent implements OnInit {
     }
   }
 
-  editPedido(pedido: Pedido): void {
-    this.selectedPedido = { ...pedido };
-    this.isFormVisible = true;
+  editPedido(pedido: ApiPedido): void {
+    this.selectedPedido = { ...pedido }; // Hacer una copia del objeto
     this.isEditing = true;
+    this.isFormVisible = true;
+    this.selectedPedido.proveedor = this.proveedores.find(proveedor => proveedor._id === this.selectedPedido.proveedor._id) || this.initializePedido().proveedor;
+    this.selectedPedido.producto = this.productos.find(producto => producto._id === this.selectedPedido.producto._id) || this.initializePedido().producto;
+    this.selectedPedido.producto.plataforma = this.videojuegosPlataformas.find(plataforma => plataforma.nombre === pedido.producto.plataforma.nombre);
   }
+  
 
   showInsertForm(): void {
     this.selectedPedido = this.initializePedido();
@@ -148,22 +165,56 @@ export default class AdminPedidosComponent implements OnInit {
     this.pedidoService.deletePedido(id).subscribe(() => this.getPedidos());
   }
 
-  initializePedido(): Pedido {
+
+  initializePedido(): ApiPedido {
     return {
-      id_pedido: null,
-      id_proveedor: -1,
-      id_videojuego_plataforma: -1,
-      id_sucursal: -1,
-      precio_unitario: null,
-      cantidad: null,
-      descuento: null,
-      total: null,
-      estado: ''
+      _id: '-1',
+      proveedor: {
+        _id: '-1',
+        nombre: '',
+        celular: '',
+        correo: '',
+        direccion: '',
+        fecha_creacion: '',
+      },
+      producto: {
+        _id: '-1',
+        nombre: '',
+        desarrolladora: '',
+        plataforma: {
+          nombre: '',
+          descripcion: '',
+          fecha_creacion: '',
+        },
+        genero: {
+          nombre: '',
+          descripcion: '',
+          fecha_creacion: '',
+        },
+        tipo: {
+          nombre: '',
+          descripcion: '',
+          fecha_creacion: '',
+        },
+        precio: 0,
+        stock: 0,
+        imagenes: [],
+        fecha_creacion: '',
+        descripcion: '',
+        claves_digitales: []
+      },
+      precio_unitario: 0,
+      cantidad: 0,
+      descuento: 0,
+      total: 0,
+      fecha_pedido: '',
     };
   }
+  
 
   closeModal(): void {
     this.isFormVisible = false;
+    this.getPedidos();
     this.selectedPedido = this.initializePedido();
   }
 }

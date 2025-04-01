@@ -15,8 +15,21 @@
         <form (ngSubmit)="insertarCliente()" #clienteForm="ngForm">
             <div class="username">
                 <select required [(ngModel)]="cliente.id_ciudad" name="id_ciudad">
-                    <option value="" disabled selected>Seleccione una ciudad</option>
-                    <option *ngFor="let ciudad of ciudades" [value]="ciudad.ID_CIUDAD">{{ciudad.NOMBRE}}</option>
+                    <option value="1" disabled selected>Seleccione una ciudad</option>
+                    <!-- ngForDeCiudades
+                    <option *ngFor="let ciudad of ciudades" [value]="ciudad.ID_CIUDAD">{{ciudad.NOMBRE}}</option> -->
+                    <option value="Pasaje">Pasaje</option>
+                    <option value="Quito">Quito</option>
+                    <option value="Guayaquil">Guayaquil</option>
+                    <option value="Cuenca">Cuenca</option>
+                    <option value="Ambato">Ambato</option>
+                    <option value="Machala">Machala</option>
+                    <option value="Manta">Manta</option>
+                    <option value="Loja">Loja</option>
+                    <option value="Riobamba">Riobamba</option>
+                    <option value="Santo Domingo">Santo Domingo</option>
+                    <option value="Portoviejo">Portoviejo</option>
+                    <option value="Esmeraldas">Esmeraldas</option>         
                 </select>
                 <div class="aux-label">
                     <label>Ciudad</label>

@@ -24,7 +24,7 @@ export class LoginClientComponent {
         localStorage.setItem('nombre_cliente', res.nombre);
         localStorage.setItem('id_cliente', res.id_cliente);
         localStorage.setItem('loginUsuario', 'true');
-        console.log(localStorage.getItem('nombre_cliente'));
+        localStorage.setItem('authToken', res.accessToken);
         if(res.succes){
           Swal.fire({
             title: 'Login exitoso',

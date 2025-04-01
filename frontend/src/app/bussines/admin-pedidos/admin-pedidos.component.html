@@ -1,100 +1,116 @@
 <div>
-  <h2>Lista de Pedidos</h2>
-  <button (click)="showInsertForm()" class="insert-button">Insertar Nuevo Pedido</button>
-  <table border="1">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Proveedor</th>
-        <th>Videojuego Plataforma</th>
-        <th>Sucursal</th>
-        <th>Precio Unitario</th>
-        <th>Cantidad</th>
-        <th>Descuento</th>
-        <th>Total</th>
-        <th>Estado</th>
-        <th>Opciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let pedido of pedidos">
-        <td>{{ pedido.id_pedido ?? '' }}</td>
-        <td>{{ pedido.id_proveedor ?? '' }}</td>
-        <td>{{ pedido.id_videojuego_plataforma ?? '' }}</td>
-        <td>{{ pedido.id_sucursal ?? '' }}</td>
-        <td>{{ pedido.precio_unitario }}</td>
-        <td>{{ pedido.cantidad }}</td>
-        <td>{{ pedido.descuento }}</td>
-        <td>{{ pedido.total }}</td>
-        <td>{{ pedido.estado }}</td>
-        <td>
-          <button (click)="editPedido(pedido)">Editar</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <h2>Lista de Pedidos</h2>
+    <button (click)="showInsertForm()" class="insert-button">Insertar Nuevo Pedido</button>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Proveedor</th>
+                <th>Titulo</th>
+                <th>Videojuego Plataforma</th>
+                <th>Precio Unitario</th>
+                <th>Cantidad</th>
+                <th>Descuento</th>
+                <th>Total</th>
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let pedido of pedidos">
+                <td>{{ pedido._id}}</td>
+                <td>{{ pedido.proveedor.nombre}}</td>
+                <td>{{ pedido.producto.nombre}}</td>
+                <td>{{ pedido.producto.plataforma.nombre}}</td>
+                <td>{{ pedido.precio_unitario }}</td>
+                <td>{{ pedido.cantidad }}</td>
+                <td>{{ pedido.descuento }}</td>
+                <td>{{ pedido.total }}</td>
+                <td>
+                    <button (click)="editPedido(pedido)">Editar</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-  <div class="modal" [ngClass]="{'is-visible': isFormVisible}">
-    <div class="modal-content">
-      <span class="close-button" (click)="closeModal()">&times;</span>
-      <h2>{{ isEditing ? 'Editar Pedido' : 'Agregar Pedido' }}</h2>
-      <form (ngSubmit)="savePedido()" #pedidoForm="ngForm">
-        <select name="id_proveedor" [(ngModel)]="selectedPedido.id_proveedor" required>
-          <option [ngValue]="-1" disabled [selected]="selectedPedido.id_proveedor === -1">Seleccione un Proveedor</option>
-          <option *ngFor="let proveedor of proveedores" [ngValue]="proveedor.ID_PROVEEDOR">{{ proveedor.NOMBRE }}</option>
-        </select>
-        <div *ngIf="validationMessages['id_proveedor']" class="error-message">
-          {{ validationMessages['id_proveedor'] }}
+    <div class="modal" [ngClass]="{'is-visible': isFormVisible}">
+        <div class="modal-content">
+            <span class="close-button" (click)="closeModal()">&times;</span>
+            <h2>{{ isEditing ? 'Editar Pedido' : 'Agregar Pedido' }}</h2>
+            <form (ngSubmit)="savePedido()" #pedidoForm="ngForm">
+
+                <select name="id_proveedor" [(ngModel)]="selectedPedido.proveedor" required>
+                    <option [ngValue]="-1" disabled [selected]="selectedPedido.proveedor.nombre === '-1'">Seleccione un
+                        Proveedor</option>
+                    <option *ngFor="let proveedor of proveedores" [ngValue]="proveedor">{{ proveedor.nombre
+                        }}</option>
+                </select>
+                <div *ngIf="validationMessages['_id']" class="error-message">
+                    {{ validationMessages['_id'] }}
+                </div>
+
+                <select name="nombre" [(ngModel)]="selectedPedido.producto" required>
+                    <option [ngValue]="-1" disabled [selected]="selectedPedido.producto.nombre === '-1'">Seleccione un
+                        Videojuego</option>
+                    <option *ngFor="let producto of productos" [ngValue]="producto">
+                        {{producto.nombre}} - {{producto.plataforma.nombre}}</option>
+                </select>
+                <div *ngIf="validationMessages['_id']" class="error-message">
+                    {{ validationMessages['_id'] }}
+                </div>
+
+                <div>
+                    <div>
+                        <label for="precio_unitario">Precio unitario:</label>
+                        <input class="input" name="precio_unitario" [(ngModel)]="selectedPedido.precio_unitario" placeholder="Precio Unitario" required type="number" min="0" (ngModelChange)="updateTotal()">
+                        <div *ngIf="validationMessages['precio_unitario']" class="error-message">
+                            {{ validationMessages['precio_unitario'] }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="cantidad">Cantidad:</label>
+                        <input class="input" name="cantidad" [(ngModel)]="selectedPedido.cantidad" placeholder="Cantidad" required type="number" min="1" (ngModelChange)="updateTotal()">
+                        <div *ngIf="validationMessages['cantidad']" class="error-message">
+                            {{ validationMessages['cantidad'] }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="descuento">Descuento</label>
+                        <input class="input" name="descuento" [(ngModel)]="selectedPedido.descuento" placeholder="Descuento" required type="number" min="0" max="1" step="0.05" (ngModelChange)="updateTotal()">
+                        <div *ngIf="validationMessages['descuento']" class="error-message">
+                            {{ validationMessages['descuento'] }}
+                        </div>
+                    </div>
+
+
+                    <div>
+
+
+
+                    </div>
+                    <label for="total">Total</label>
+                    <input class="input" name="total" [value]="calculateTotal()" placeholder="Total" required type="number" min="0" readonly>
+                    <div *ngIf="validationMessages['total']" class="error-message">
+                        {{ validationMessages['total'] }}
+                    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <button type="submit">{{ isEditing ? 'Actualizar' : 'Agregar' }}</button>
+            </form>
         </div>
-
-        <select name="id_videojuego_plataforma" [(ngModel)]="selectedPedido.id_videojuego_plataforma" required>
-          <option [ngValue]="-1" disabled [selected]="selectedPedido.id_videojuego_plataforma === -1">Seleccione un Videojuego Plataforma</option>
-          <option *ngFor="let vp of videojuegosPlataformas" [ngValue]="vp.ID_VIDEOJUEGO_PLATAFORMA">{{ vp.ID_VIDEOJUEGO_PLATAFORMA }}</option>
-        </select>
-        <div *ngIf="validationMessages['id_videojuego_plataforma']" class="error-message">
-          {{ validationMessages['id_videojuego_plataforma'] }}
-        </div>
-
-        <select name="id_sucursal" [(ngModel)]="selectedPedido.id_sucursal" required>
-          <option [ngValue]="-1" disabled [selected]="selectedPedido.id_sucursal === -1">Seleccione una Sucursal</option>
-          <option *ngFor="let sucursal of sucursales" [ngValue]="sucursal.ID_SUCURSAL">{{ sucursal.DIRECCION }}</option>
-        </select>
-        <div *ngIf="validationMessages['id_sucursal']" class="error-message">
-          {{ validationMessages['id_sucursal'] }}
-        </div>
-
-        <input name="precio_unitario" [(ngModel)]="selectedPedido.precio_unitario" placeholder="Precio Unitario" required type="number" min="0" (ngModelChange)="updateTotal()">
-        <div *ngIf="validationMessages['precio_unitario']" class="error-message">
-          {{ validationMessages['precio_unitario'] }}
-        </div>
-
-        <input name="cantidad" [(ngModel)]="selectedPedido.cantidad" placeholder="Cantidad" required type="number" min="1" (ngModelChange)="updateTotal()">
-        <div *ngIf="validationMessages['cantidad']" class="error-message">
-          {{ validationMessages['cantidad'] }}
-        </div>
-
-        <input name="descuento" [(ngModel)]="selectedPedido.descuento" placeholder="Descuento" required type="number" min="0" max="1" step="0.05" (ngModelChange)="updateTotal()">
-        <div *ngIf="validationMessages['descuento']" class="error-message">
-          {{ validationMessages['descuento'] }}
-        </div>
-
-        <input name="total" [value]="calculateTotal()" placeholder="Total" required type="number" min="0" readonly>
-        <div *ngIf="validationMessages['total']" class="error-message">
-          {{ validationMessages['total'] }}
-        </div>
-
-
-        <select name="estado" [(ngModel)]="selectedPedido.estado" required>
-          <option value="" disabled [selected]="selectedPedido.estado === ''">Seleccione un Estado</option>
-          <option value="activo">Activo</option>
-          <option value="inactivo">Inactivo</option>
-        </select>
-        <div *ngIf="validationMessages['estado']" class="error-message">
-          {{ validationMessages['estado'] }}
-        </div>
-
-        <button type="submit">{{ isEditing ? 'Actualizar' : 'Agregar' }}</button>
-      </form>
     </div>
-  </div>
 </div>

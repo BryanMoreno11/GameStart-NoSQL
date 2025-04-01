@@ -1,0 +1,236 @@
+<div class="admin-productos">
+  <div class="title-container">
+    <h2>Lista de Productos</h2>
+    <button (click)="showInsertForm()" class="insert-button">
+      Insertar Nuevo Producto
+    </button>
+  </div>
+  
+  <!-- Filtro sin botón -->
+  <div class="filter-container">
+    <div class="filter-inner">
+      <input type="text"
+             placeholder="Buscar por nombre..."
+             [(ngModel)]="searchName"
+             (ngModelChange)="applyFilter()"
+             name="searchName">
+
+      <select [(ngModel)]="filterType"
+              (ngModelChange)="applyFilter()"
+              name="filterType">
+        <option value="">Todos los tipos</option>
+        <option value="digital">Digital</option>
+        <option value="físico">Físico</option>
+      </select>
+
+      <select [(ngModel)]="filterPlatform"
+              (ngModelChange)="applyFilter()"
+              name="filterPlatform">
+        <option value="">Todas las plataformas</option>
+        <option *ngFor="let plat of plataformas" [value]="plat.nombre">{{ plat.nombre }}</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>Imagen</th>
+          <th>Nombre</th>
+          <th>Desarrolladora</th>
+          <th>Plataforma</th>
+          <th>Género</th>
+          <th>Tipo</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th style="width:250px;">Descripción</th>
+          <th style="width:80px;">Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let producto of filteredProductos">
+          <td>
+            <!-- Mini carrusel -->
+            <div class="mini-carousel" *ngIf="producto.imagenes && producto.imagenes.length">
+              <!-- Flecha izquierda -->
+              <button class="carousel-btn left"
+                      (click)="prevImage(producto)">
+                &#10094;  <!-- Símbolo « o ‹ -->
+              </button>
+
+              <!-- Imagen actual según el índice almacenado en carouselIndex[ producto._id ] -->
+              <img [src]="producto.imagenes[carouselIndex[producto._id] || 0]"
+                   alt="Imagen de {{ producto.nombre }}"
+                   class="product-img">
+
+              <!-- Flecha derecha -->
+              <button class="carousel-btn right"
+                      (click)="nextImage(producto)">
+                &#10095;  <!-- Símbolo » o › -->
+              </button>
+            </div>
+          </td>
+
+          <td>{{ producto.nombre }}</td>
+          <td>{{ producto.desarrolladora }}</td>
+          <td>{{ producto.plataforma.nombre }}</td>
+          <td>{{ producto.genero.nombre }} - {{ producto.genero.descripcion }}</td>
+          <td>{{ producto.tipo.nombre }}</td>
+          <td>{{ producto.precio }}</td>
+          <td>{{ producto.stock }}</td>
+          <td>{{ producto.descripcion }}</td>
+          <td>
+            <div class="btn-container">
+              <button class="edit" (click)="editProducto(producto)">Editar</button>
+            </div>
+            <div class="btn-container" *ngIf="producto.tipo.nombre.toLowerCase() === 'digital'">
+              <button class="view-keys" (click)="viewKeys(producto)">Ver Claves</button>
+            </div>
+            <div class="btn-container" *ngIf="producto.tipo.nombre.toLowerCase() === 'digital'">
+              <button class="edit-keys" (click)="editClaves(producto)">
+                <i class="fa fa-pencil"></i> Editar Claves
+              </button>
+            </div>
+            <div class="btn-container">
+              <button class="stock" (click)="changeStock(producto)">Cambiar Stock</button>
+            </div>
+            <div class="btn-container">
+              <button class="delete" (click)="deleteProducto(producto._id)">Borrar</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Modal para agregar/editar producto -->
+  <div class="modal" [ngClass]="{'is-visible': isFormVisible}" (click)="onModalClick($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <span class="close-button" (click)="closeModal()">×</span>
+      <h2>{{ isEditing ? 'Editar Producto' : 'Agregar Producto' }}</h2>
+      <form (ngSubmit)="saveProducto()" #productoForm="ngForm">
+        
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input id="nombre" name="nombre"
+                 [(ngModel)]="selectedProducto.nombre"
+                 placeholder="Nombre" required>
+        </div>
+
+        <div class="form-group">
+          <label for="desarrolladora">Desarrolladora</label>
+          <input id="desarrolladora" name="desarrolladora"
+                 [(ngModel)]="selectedProducto.desarrolladora"
+                 placeholder="Desarrolladora" required>
+        </div>
+
+        <div class="form-group">
+          <label for="precio">Precio</label>
+          <input id="precio" name="precio"
+                 type="number"
+                 [(ngModel)]="selectedProducto.precio"
+                 placeholder="Precio" required>
+        </div>
+
+        <div class="form-group">
+          <label for="plataforma">Plataforma</label>
+          <select id="plataforma"
+                  name="plataforma"
+                  [(ngModel)]="selectedProducto.plataforma"
+                  [compareWith]="comparePlatforms"
+                  required>
+            <option *ngFor="let plat of plataformas" [ngValue]="plat">{{ plat.nombre }}</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Descripción de Plataforma</label>
+          <input type="text"
+                 [value]="selectedProducto.plataforma.descripcion"
+                 disabled>
+        </div>
+        
+        <div class="form-group">
+          <label for="generoNombre">Nombre del Género</label>
+          <input id="generoNombre"
+                 name="generoNombre"
+                 [(ngModel)]="selectedProducto.genero.nombre"
+                 placeholder="Ej: RPG"
+                 required>
+        </div>
+
+        <div class="form-group">
+          <label for="generoDescripcion">Descripción del Género</label>
+          <textarea id="generoDescripcion"
+                    name="generoDescripcion"
+                    [(ngModel)]="selectedProducto.genero.descripcion"
+                    placeholder="Role-playing game, con aventuras y misiones."
+                    required
+                    class="large-text"></textarea>
+        </div>
+
+        <!-- Sólo en creación -->
+        <div class="form-group" *ngIf="!isEditing">
+          <label for="tipo">Tipo</label>
+          <select id="tipo" name="tipo"
+                  [(ngModel)]="selectedProducto.tipo"
+                  required>
+            <option [ngValue]="{nombre: 'Digital', descripcion: '', fecha_creacion: ''}">
+              Digital
+            </option>
+            <option [ngValue]="{nombre: 'Físico', descripcion: '', fecha_creacion: ''}">
+              Físico
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="!isEditing">
+          <label for="stock">Stock</label>
+          <input id="stock" name="stock"
+                 type="number"
+                 [(ngModel)]="selectedProducto.stock"
+                 placeholder="Stock"
+                 required>
+        </div>
+
+        <div class="form-group">
+          <label>URLs de Imágenes</label>
+          <div class="image-urls-container">
+            <div class="image-url-entry"
+                 *ngFor="let url of selectedProducto.imagenes; let i = index">
+              <input type="text"
+                     [(ngModel)]="selectedProducto.imagenes[i]"
+                     [name]="'imageUrl' + i"
+                     placeholder="URL de imagen {{i + 1}}"
+                     required>
+              <button type="button"
+                      class="image-button remove-image-button"
+                      (click)="removeImageUrl(i)"
+                      *ngIf="selectedProducto.imagenes.length > 1">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+            <button type="button"
+                    class="image-button add-image-button"
+                    (click)="addImageUrl()">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="descripcion">Descripción del Producto</label>
+          <textarea id="descripcion"
+                    name="descripcion"
+                    [(ngModel)]="selectedProducto.descripcion"
+                    placeholder="Descripción detallada del producto"
+                    required
+                    class="large-text"></textarea>
+        </div>
+
+        <button type="submit">{{ isEditing ? 'Actualizar' : 'Agregar' }}</button>
+      </form>
+    </div>
+  </div>
+</div>
