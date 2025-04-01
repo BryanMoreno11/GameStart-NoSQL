@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = new Router();
-const autheticateToken = require("../middleware/authenticateToken");
+const autheticateToken = require("../Middleware/authenticateToken");
 
 const { getPedidos, addPedido, updatePedido, deletePedido } = require('../Controllers/pedidosController');
 
