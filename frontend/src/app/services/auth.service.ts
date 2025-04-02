@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   //atributos
-  API_URL='http://localhost:3000/api/';
+  API_URL = environment.apiUrl;
   constructor(private http: HttpClient) { }
   //metodo para verificar el token
   // Método para verificar el token

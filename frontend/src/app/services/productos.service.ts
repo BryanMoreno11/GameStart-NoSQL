@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductosService {
   // URL base del API
-  private urlBase = 'http://localhost:3000/api/';
+  private urlBase = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
   // Obtiene todos los productos
   getProductos(): Observable<Producto[]> {
+    console.log("La url usada es ", this.urlBase);
     return this.http.get<Producto[]>(`${this.urlBase}productos`);
   }
 

@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { Pedido } from '../models/pedido';
 import { ApiPedido } from '../models/pedido';
 import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PedidoService {
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = environment.apiUrl;
   private accessToken = localStorage.getItem('authToken');
   
   constructor(private http: HttpClient) {}

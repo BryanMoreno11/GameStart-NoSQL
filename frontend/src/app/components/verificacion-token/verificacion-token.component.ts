@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { environment } from '../../../environments/environment';
 
 
 @Component({
@@ -31,7 +32,7 @@ export class VerificacionTokenComponent {
 }
 
 getSecret(correo: string) {
-    this.http.get<any>(`http://localhost:3000/api/usuariocorreo/${correo}`).subscribe(
+    this.http.get<any>(`${environment.apiUrl}usuariocorreo/${correo}`).subscribe(
         res => {
           this.secret = res.secret;
         },

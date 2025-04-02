@@ -2,10 +2,7 @@ import { Injectable } from '@angular/core';
 import Swal from 'sweetalert2';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-
-
-
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +19,7 @@ carrito:ICarrito={
 };
  iva = 0.15;
 
-urlBase='http://localhost:3000/api/';
+urlBase = environment.apiUrl;
 
 //#region Métodos
 ngOnInit(): void {

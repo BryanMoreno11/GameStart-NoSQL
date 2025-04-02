@@ -12,6 +12,7 @@ import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-carrito',
@@ -208,7 +209,7 @@ export class CarritoComponent {
       ciudad: this.vistaVenta.cliente.id_ciudad,
       claves_digitales: this.vistaVenta.clavesUsuario
     }
-    this.httpclien.post('http://localhost:3000/api/correo/',params).subscribe(resp=>{
+    this.httpclien.post(`${environment.apiUrl}correo/`, params).subscribe(resp=>{
     console.log(resp);
     });
   }

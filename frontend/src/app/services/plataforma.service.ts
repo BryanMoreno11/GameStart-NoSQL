@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlataformaService {
 
-  private urlBase='http://localhost:3000/api/';
+  private urlBase = environment.apiUrl;
 
   //region métodos
   constructor(private _httpClient: HttpClient) { 

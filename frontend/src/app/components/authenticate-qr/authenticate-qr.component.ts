@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
 import { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-authenticate-qr',
@@ -28,7 +28,7 @@ export class AuthenticateQrComponent implements OnInit {
   }
 
   generateQRCode(correo: string) {
-    this.http.get<any>(`http://localhost:3000/api/generate-qr`, { params: { correo } }).subscribe(
+    this.http.get<any>(`${environment.apiUrl}generate-qr`, { params: { correo } }).subscribe(
       res => {
         if (res.qrCode) {
           this.qrCodeUrl = res.qrCode;
