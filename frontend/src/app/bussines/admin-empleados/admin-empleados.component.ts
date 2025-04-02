@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { EmpleadoService } from '../../services/empleado.service';
-import { Empleado, Puesto } from '../../models/empleado';
+import { Empleado } from '../../models/empleado';
 import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
