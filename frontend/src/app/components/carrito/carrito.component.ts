@@ -80,7 +80,7 @@ export class CarritoComponent {
   }
 
   validarCantidad(cantidad: number) {
-    if (cantidad == null || isNaN(cantidad) || cantidad <= 0) {
+    if (cantidad == null || isNaN(cantidad) || cantidad <= 0 || cantidad%1 !== 0) {
       return false
     }
     return true;
@@ -210,7 +210,6 @@ export class CarritoComponent {
       claves_digitales: this.vistaVenta.clavesUsuario
     }
     this.httpclien.post(`${environment.apiUrl}correo/`, params).subscribe(resp=>{
-    console.log(resp);
     });
   }
 }

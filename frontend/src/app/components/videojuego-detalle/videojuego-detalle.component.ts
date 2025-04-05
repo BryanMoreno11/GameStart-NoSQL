@@ -170,7 +170,7 @@ export class VideojuegoDetalleComponent implements OnInit {
   }
 
   changeCantidad() {
-    if (this.cantidad == null || isNaN(this.cantidad) || this.cantidad <= 0  ) {
+    if (this.cantidad == null || isNaN(this.cantidad) || this.cantidad <= 0 || this.cantidad%1 !== 0) {
       this.cantidad = 1;
     }
   }
